@@ -54,8 +54,8 @@ public class ClockTooltips {
         MutableComponent value;
 
         if (natural(level)) {
-            MoonPhase h = level.environmentAttributes().getValue(EnvironmentAttributes.MOON_PHASE, position);
-            value = Component.translatable("tooltiptweaks.ui.clock.moon_phase.value_" + h);
+            MoonPhase phase = level.environmentAttributes().getValue(EnvironmentAttributes.MOON_PHASE, position);
+            value = Component.translatable("tooltiptweaks.ui.clock.moon_phase." + phase.getSerializedName());
         } else {
             value = UNKNOWN_TEXT;
         }
