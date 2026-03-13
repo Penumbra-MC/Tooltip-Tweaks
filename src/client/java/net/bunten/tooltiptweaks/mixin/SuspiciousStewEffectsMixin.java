@@ -1,6 +1,7 @@
 package net.bunten.tooltiptweaks.mixin;
 
 import net.bunten.tooltiptweaks.config.TooltipTweaksConfig;
+import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.TooltipFlag;
@@ -13,10 +14,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.function.Consumer;
 
 @Mixin(SuspiciousStewEffects.class)
-public abstract class SuspiciousStewEffectsComponentMixin {
+public abstract class SuspiciousStewEffectsMixin {
 
     @Inject(method = "addToTooltip", at = @At("HEAD"), cancellable = true)
-    public void appendTooltip(Item.TooltipContext context, Consumer<Component> tooltip, TooltipFlag type, CallbackInfo info) {
+    public void appendTooltip(Item.TooltipContext tooltipContext, Consumer<Component> consumer, TooltipFlag tooltipFlag, DataComponentGetter dataComponentGetter, CallbackInfo info) {
         if (TooltipTweaksConfig.getInstance().updatePotionTooltips) info.cancel();
     }
 }

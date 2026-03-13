@@ -6,10 +6,11 @@ import net.bunten.tooltiptweaks.config.options.ContainerStyle;
 import net.bunten.tooltiptweaks.tooltips.AbstractTooltip;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
+
 import java.util.List;
 
 public class ContainerTooltipGUI extends AbstractTooltip {
@@ -43,10 +44,10 @@ public class ContainerTooltipGUI extends AbstractTooltip {
     }
 
     @Override
-    public void renderImage(Font textRenderer, int x, int y, int width, int height, GuiGraphics context) {
+    public void renderImage(Font font, int x, int y, int width, int height, GuiGraphics graphics) {
         if (isEmpty()) return;
 
-        context.blit(RenderType::guiTextured, TooltipTweaksMod.id("textures/gui/container.png"), x, y, 0, 0, 172, 64, 256, 128);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TooltipTweaksMod.id("textures/gui/container.png"), x, y, 0, 0, 172, 64, 256, 128);
 
         int xOffset = 2;
         int yOffset = -16;
@@ -62,8 +63,8 @@ public class ContainerTooltipGUI extends AbstractTooltip {
                 yOffset += 18;
             }
 
-            context.renderItem(stack, x + xOffset, y + yOffset);
-            context.renderItemDecorations(textRenderer, stack, x + xOffset, y + yOffset);
+            graphics.renderItem(stack, x + xOffset, y + yOffset);
+            graphics.renderItemDecorations(font, stack, x + xOffset, y + yOffset);
         }
     }
 }

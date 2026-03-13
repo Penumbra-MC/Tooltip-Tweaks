@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.bunten.tooltiptweaks.config.TooltipTweaksConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.TooltipFlag;
@@ -20,20 +21,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.function.Consumer;
 
 @Mixin(ItemEnchantments.class)
-public abstract class ItemEnchantmentsComponentMixin {
-
-    @Final
-    @Shadow
-    boolean showInTooltip;
+public abstract class ItemEnchantmentsMixin {
 
     @Final
     @Shadow
     Object2IntOpenHashMap<Holder<Enchantment>> enchantments;
 
     @Inject(method = "addToTooltip", at = @At("HEAD"))
-    public void addHeader(Item.TooltipContext context, Consumer<Component> tooltip, TooltipFlag type, CallbackInfo info) {
-        if (TooltipTweaksConfig.getInstance().updateEnchantmentTooltips && showInTooltip && !enchantments.isEmpty()) {
-            tooltip.accept(Component.translatable("tooltiptweaks.ui.enchantments").withStyle(ChatFormatting.GRAY));
+    public void addHeader(Item.TooltipContext context, Consumer<Component> consumer, TooltipFlag flag, DataComponentGetter getter, CallbackInfo info) {
+        if (TooltipTweaksConfig.getInstance().updateEnchantmentTooltips && !enchantments.isEmpty()) {
+            consumer.accept(Component.translatable("tooltiptweaks.ui.enchantments").withStyle(ChatFormatting.GRAY));
         }
     }
 

@@ -1,25 +1,19 @@
 {
   "required": true,
   "package": "net.bunten.tooltiptweaks.mixin",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_21",
   "injectors": {
     "defaultRequire": 1
   },
   "client": [
-    "ShulkerBoxBlockMixin",
-    "TooltipComponentMixin"
-  ],
-  "mixins": [
-    "CrossbowItemMixin",
+    "ChargedProjectilesMixin",
+    "ClientTooltipComponentMixin",
     "EnchantmentMixin",
-    "ItemEnchantmentsComponentMixin",
+    "ItemContainerContentsMixin",
+    "ItemEnchantmentsMixin",
     "ItemMixin",
     "ItemStackMixin",
-    "LingeringPotionItemMixin",
-    "OminousBottleAmplifierComponentMixin",
-    "PotionItemMixin",
-    "ShieldItemMixin",
-    "SuspiciousStewEffectsComponentMixin",
-    "TippedArrowItemMixin"
+    "OminousBottleAmplifierMixin",
+    "SuspiciousStewEffectsMixin"
   ]
 }

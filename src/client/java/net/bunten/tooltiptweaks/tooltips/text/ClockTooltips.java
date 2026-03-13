@@ -7,25 +7,28 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.attribute.EnvironmentAttributes;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.level.MoonPhase;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
 public class ClockTooltips {
 
-    private final Minecraft client = Minecraft.getInstance();
-    private final TooltipTweaksConfig config = TooltipTweaksConfig.getInstance();
+    private static final Minecraft minecraft = Minecraft.getInstance();
+    private static final TooltipTweaksConfig config = TooltipTweaksConfig.getInstance();
 
     private static final MutableComponent UNKNOWN_TEXT = Component.translatable("tooltiptweaks.ui.unknown");
 
-    public static MutableComponent getClockText(ClientLevel world) {
+    public static MutableComponent getClockText(ClientLevel level) {
         MutableComponent value = UNKNOWN_TEXT;
 
-        if (world.dimensionType().natural()) {
+        if (natural(level)) {
             boolean twelveHour = TooltipTweaksConfig.getInstance().clockTimeDisplay == ClockTimeDisplay.TWELVE_HOUR;
-            long time = Minecraft.getInstance().level.getDayTime();
+            long time = minecraft.level.getDayTime();
 
             int hour = (int) ((time / 1000L + 6L) % 24L);
             int minute = (int) (60L * (time % 1000L) / 1000L);
@@ -42,23 +45,32 @@ public class ClockTooltips {
         return Component.translatable("tooltiptweaks.ui.clock.time", value);
     }
 
-    public static MutableComponent getDayText(ClientLevel world) {
-        MutableComponent value = !world.dimensionType().natural() ? UNKNOWN_TEXT : Component.literal(String.valueOf(world.getDayTime() / 24000L));
+    public static MutableComponent getDayText(ClientLevel level) {
+        MutableComponent value = !natural(level) ? UNKNOWN_TEXT : Component.literal(String.valueOf(level.getDayTime() / 24000L));
         return Component.translatable("tooltiptweaks.ui.clock.day_number", value);
     }
 
-    public static MutableComponent getMoonPhaseText(ClientLevel world) {
-        MutableComponent value = !world.dimensionType().natural() ? UNKNOWN_TEXT : Component.translatable("tooltiptweaks.ui.clock.moon_phase.value_" + world.getMoonPhase());
+    public static MutableComponent getMoonPhaseText(ClientLevel level, Vec3 position) {
+        MutableComponent value;
+
+        if (natural(level)) {
+            MoonPhase h = level.environmentAttributes().getValue(EnvironmentAttributes.MOON_PHASE, position);
+            value = Component.translatable("tooltiptweaks.ui.clock.moon_phase.value_" + h);
+        } else {
+            value = UNKNOWN_TEXT;
+        }
         return Component.translatable("tooltiptweaks.ui.clock.moon_phase", value);
     }
 
     public void register(ItemStack stack, List<Component> lines) {
-        @Nullable ClientLevel world = client.level;
-        if (!stack.is(Items.CLOCK) || world == null) return;
+        ClientLevel level = minecraft.level;
+        Entity cameraEntity = minecraft.getCameraEntity();
 
-        MutableComponent dayText = getDayText(world);
-        MutableComponent timeText = getClockText(world);
-        MutableComponent phaseText = getMoonPhaseText(world);
+        if (!stack.is(Items.CLOCK) || level == null || cameraEntity == null) return;
+
+        MutableComponent dayText = getDayText(level);
+        MutableComponent timeText = getClockText(level);
+        MutableComponent phaseText = getMoonPhaseText(level, cameraEntity.position());
 
         if (config.displayDayNumber && config.clockTimeDisplay == ClockTimeDisplay.DISABLED) lines.add(dayText.withStyle(ChatFormatting.GRAY));
 
@@ -68,5 +80,9 @@ public class ClockTooltips {
         }
 
         if (config.displayMoonPhase) lines.add(phaseText.withStyle(ChatFormatting.GRAY));
+    }
+
+    private static boolean natural(ClientLevel level) {
+        return level != null && level.dimension().equals(ClientLevel.OVERWORLD);
     }
 }

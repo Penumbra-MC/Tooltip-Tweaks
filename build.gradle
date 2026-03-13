@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.8-SNAPSHOT'
+	id 'fabric-loom' version "${loom_version}"
 	id 'maven-publish'
 }
 
@@ -31,6 +31,24 @@ repositories {
 	}
 }
 
+def dateFormat = new Date().format("yy.MM.dd")
+
+tasks.register("buildDated") {
+	group = "build"
+	description = "Assembles project with date in archive filenames"
+	dependsOn "build"
+}
+
+gradle.taskGraph.whenReady { graph ->
+	def dated = graph.hasTask(tasks.buildDated)
+
+	tasks.matching { it.name in ["jar", "sourcesJar", "remapSourcesJar", "remapJar"] }.configureEach {
+		def prefix = dated ? "${dateFormat}-" : ""
+		archiveBaseName.set("${prefix}${archives_base_name}")
+		archiveVersion.set("${mod_version}+mc${minecraft_version}")
+	}
+}
+
 loom {
 	splitEnvironmentSourceSets()
 
@@ -39,14 +57,13 @@ loom {
 			sourceSet sourceSets.client
 		}
 	}
-
 }
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings loom.officialMojangMappings();
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 	modImplementation "dev.isxander:yet-another-config-lib:${project.yacl_version}"
@@ -72,8 +89,8 @@ java {
 }
 
 jar {
-	from("LICENSE") {
-		rename { "${it}_${project.base.archivesName.get()}"}
+	from("LICENSE.md") {
+		rename { "LICENSE_tooltiptweaks" }
 	}
 }
 

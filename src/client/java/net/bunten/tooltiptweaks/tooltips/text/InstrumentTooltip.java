@@ -8,13 +8,14 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+
 import java.util.List;
 import java.util.Set;
 
@@ -43,8 +44,8 @@ public class InstrumentTooltip {
                     case DRAGON -> EntityType.ENDER_DRAGON.getDescription().copy();
                     case PLAYER -> Component.translatable("tooltiptweaks.ui.instrument.custom_head");
                     default -> {
-                        var entity = BuiltInRegistries.ENTITY_TYPE.getValue(ResourceLocation.parse(skull.getType().getSerializedName()));
-                        yield entity != null ? entity.getDescription().copy() : Component.literal("ERROR");
+                        EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.parse(skull.getType().getSerializedName()));
+                        yield type != null ? type.getDescription().copy() : Component.literal("ERROR");
                     }
                 };
             }
