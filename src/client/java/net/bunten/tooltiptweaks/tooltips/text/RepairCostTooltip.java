@@ -2,23 +2,22 @@ package net.bunten.tooltiptweaks.tooltips.text;
 
 import net.bunten.tooltiptweaks.config.TooltipTweaksConfig;
 import net.bunten.tooltiptweaks.config.options.RepairCostDisplay;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ingame.AnvilScreen;
-import net.minecraft.client.gui.screen.ingame.GrindstoneScreen;
-import net.minecraft.client.gui.screen.ingame.SmithingScreen;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.AnvilScreen;
+import net.minecraft.client.gui.screens.inventory.GrindstoneScreen;
+import net.minecraft.client.gui.screens.inventory.SmithingScreen;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 import java.util.List;
 
 import static net.bunten.tooltiptweaks.TooltipTweaksMod.creative;
 
 public class RepairCostTooltip {
 
-    private final MinecraftClient client = MinecraftClient.getInstance();
+    private final Minecraft client = Minecraft.getInstance();
     private final TooltipTweaksConfig config = TooltipTweaksConfig.getInstance();
 
     private int getRepairCostTextColor(int repairCost) {
@@ -26,26 +25,26 @@ public class RepairCostTooltip {
         float damage = Math.min(repairCost, max);
 
         float f = Math.max(0, (max - damage) / max);
-        return MathHelper.hsvToRgb(f / 5, 1, 1);
+        return Mth.hsvToRgb(f / 5, 1, 1);
     }
 
     private boolean canDisplay(ItemStack stack) {
-        if (!stack.contains(DataComponentTypes.REPAIR_COST) || config.repairCostDisplay == RepairCostDisplay.DISABLED) return false;
+        if (!stack.has(DataComponents.REPAIR_COST) || config.repairCostDisplay == RepairCostDisplay.DISABLED) return false;
 
         if (config.repairCostDisplay == RepairCostDisplay.ON_RELEVANT_MENUS) {
-            return client.currentScreen instanceof AnvilScreen || client.currentScreen instanceof GrindstoneScreen || client.currentScreen instanceof SmithingScreen;
+            return client.screen instanceof AnvilScreen || client.screen instanceof GrindstoneScreen || client.screen instanceof SmithingScreen;
         }
 
         return config.repairCostDisplay == RepairCostDisplay.ENABLED;
     }
 
-    public void register(ItemStack stack, List<Text> lines) {
+    public void register(ItemStack stack, List<Component> lines) {
         if (canDisplay(stack)) {
-            Integer repairCost = stack.get(DataComponentTypes.REPAIR_COST);
+            Integer repairCost = stack.get(DataComponents.REPAIR_COST);
             if (repairCost == null || repairCost < 1) return;
-            MutableText message = Text.translatable("tooltiptweaks.ui.repair_cost", repairCost);
+            MutableComponent message = Component.translatable("tooltiptweaks.ui.repair_cost", repairCost);
 
-            if (!creative() && repairCost + 1 >= 40) message = Text.translatable("tooltiptweaks.ui.cannot_repair");
+            if (!creative() && repairCost + 1 >= 40) message = Component.translatable("tooltiptweaks.ui.cannot_repair");
 
             lines.add(message.setStyle(message.getStyle().withColor(getRepairCostTextColor(repairCost))));
         }

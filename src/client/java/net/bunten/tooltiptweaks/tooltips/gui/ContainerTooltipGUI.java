@@ -4,27 +4,26 @@ import net.bunten.tooltiptweaks.TooltipTweaksMod;
 import net.bunten.tooltiptweaks.config.TooltipTweaksConfig;
 import net.bunten.tooltiptweaks.config.options.ContainerStyle;
 import net.bunten.tooltiptweaks.tooltips.AbstractTooltip;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ContainerComponent;
-import net.minecraft.item.ItemStack;
-
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 import java.util.List;
 
 public class ContainerTooltipGUI extends AbstractTooltip {
-    private ContainerComponent component;
+    private ItemContainerContents component;
 
     @Override
     public AbstractTooltip withStack(ItemStack stack) {
-        component = stack.getOrDefault(DataComponentTypes.CONTAINER, ContainerComponent.DEFAULT);
+        component = stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
         return this;
     }
 
     @Override
     public boolean canDisplay(ItemStack stack) {
-        return stack.getComponents().contains(DataComponentTypes.CONTAINER) && TooltipTweaksConfig.getInstance().containerStyle == ContainerStyle.INVENTORY;
+        return stack.getComponents().has(DataComponents.CONTAINER) && TooltipTweaksConfig.getInstance().containerStyle == ContainerStyle.INVENTORY;
     }
 
     private boolean isEmpty() {
@@ -32,22 +31,22 @@ public class ContainerTooltipGUI extends AbstractTooltip {
     }
 
     @Override
-    public int getHeight(TextRenderer textRenderer) {
+    public int getHeight(Font textRenderer) {
         if (isEmpty()) return 0;
         return 59;
     }
 
     @Override
-    public int getWidth(TextRenderer textRenderer) {
+    public int getWidth(Font textRenderer) {
         if (isEmpty()) return 0;
         return 164;
     }
 
     @Override
-    public void drawItems(TextRenderer textRenderer, int x, int y, int width, int height, DrawContext context) {
+    public void renderImage(Font textRenderer, int x, int y, int width, int height, GuiGraphics context) {
         if (isEmpty()) return;
 
-        context.drawTexture(RenderLayer::getGuiTextured, TooltipTweaksMod.id("textures/gui/container.png"), x, y, 0, 0, 172, 64, 256, 128);
+        context.blit(RenderType::guiTextured, TooltipTweaksMod.id("textures/gui/container.png"), x, y, 0, 0, 172, 64, 256, 128);
 
         int xOffset = 2;
         int yOffset = -16;
@@ -63,8 +62,8 @@ public class ContainerTooltipGUI extends AbstractTooltip {
                 yOffset += 18;
             }
 
-            context.drawItem(stack, x + xOffset, y + yOffset);
-            context.drawStackOverlay(textRenderer, stack, x + xOffset, y + yOffset);
+            context.renderItem(stack, x + xOffset, y + yOffset);
+            context.renderItemDecorations(textRenderer, stack, x + xOffset, y + yOffset);
         }
     }
 }

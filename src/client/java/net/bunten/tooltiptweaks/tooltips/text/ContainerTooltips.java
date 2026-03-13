@@ -2,32 +2,31 @@ package net.bunten.tooltiptweaks.tooltips.text;
 
 import net.bunten.tooltiptweaks.config.TooltipTweaksConfig;
 import net.bunten.tooltiptweaks.config.options.ContainerStyle;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ContainerComponent;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.collection.DefaultedList;
-
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 public class ContainerTooltips {
 
-    private static final Text UNKNOWN_CONTENTS_TEXT = Text.translatable("container.shulkerBox.unknownContents");
+    private static final Component UNKNOWN_CONTENTS_TEXT = Component.translatable("container.shulkerBox.unknownContents");
 
-    private final DefaultedList<ItemStack> INVENTORY = DefaultedList.ofSize(27, ItemStack.EMPTY);
+    private final NonNullList<ItemStack> INVENTORY = NonNullList.withSize(27, ItemStack.EMPTY);
     private final LinkedHashMap<Item, Integer> ITEM_COUNT_MAP = new LinkedHashMap<Item, Integer>();
 
-    private final MinecraftClient client = MinecraftClient.getInstance();
+    private final Minecraft client = Minecraft.getInstance();
     private final TooltipTweaksConfig config = TooltipTweaksConfig.getInstance();
 
-    private void addPerItemTooltips(ItemStack stack, List<Text> lines) {
+    private void addPerItemTooltips(ItemStack stack, List<Component> lines) {
 
         // Go through the inventory and add items to a HashMap
-        for (ItemStack itemStack : stack.getOrDefault(DataComponentTypes.CONTAINER, ContainerComponent.DEFAULT).iterateNonEmpty()) {
+        for (ItemStack itemStack : stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).nonEmptyItems()) {
             if (!itemStack.isEmpty()) {
                 Item item = itemStack.getItem();
                 int count = itemStack.getCount();
@@ -42,11 +41,11 @@ public class ContainerTooltips {
 
         // Go through the HashMap and render lines based on the item and count data
         for (var set : ITEM_COUNT_MAP.entrySet()) {
-            var name = set.getKey().getName().copyContentOnly();
+            var name = set.getKey().getName().plainCopy();
             var count = set.getValue();
 
             if (renderedLines < maxrenderedLines) {
-                lines.add(name.formatted(Formatting.GRAY).append(Text.translatable("tooltiptweaks.ui.container.entry", count).formatted(Formatting.WHITE)));
+                lines.add(name.withStyle(ChatFormatting.GRAY).append(Component.translatable("tooltiptweaks.ui.container.entry", count).withStyle(ChatFormatting.WHITE)));
                 renderedLines++;
             } else {
                 moreItems++;
@@ -54,22 +53,22 @@ public class ContainerTooltips {
         }
 
         if (renderedLines >= maxrenderedLines && moreItems > 0) {
-            lines.add(Text.translatable("tooltiptweaks.ui.container.more", moreItems).formatted(Formatting.ITALIC, Formatting.GRAY));
+            lines.add(Component.translatable("tooltiptweaks.ui.container.more", moreItems).withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
         }
     }
 
-    private void addPerStackTooltips(ItemStack stack, List<Text> lines) {
+    private void addPerStackTooltips(ItemStack stack, List<Component> lines) {
 
         int maxrenderedLines = config.containerEntries;
         var renderedLines = 0;
         var moreItems = 0;
 
-        for (ItemStack itemStack : stack.getOrDefault(DataComponentTypes.CONTAINER, ContainerComponent.DEFAULT).iterateNonEmpty()) {
-            var name = itemStack.getName().copyContentOnly();
+        for (ItemStack itemStack : stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).nonEmptyItems()) {
+            var name = itemStack.getHoverName().plainCopy();
             var count = itemStack.getCount();
 
             if (renderedLines < maxrenderedLines) {
-                lines.add(name.formatted(Formatting.GRAY).append(Text.translatable("tooltiptweaks.ui.container.entry", count).formatted(Formatting.WHITE)));
+                lines.add(name.withStyle(ChatFormatting.GRAY).append(Component.translatable("tooltiptweaks.ui.container.entry", count).withStyle(ChatFormatting.WHITE)));
                 renderedLines++;
             } else {
                 moreItems++;
@@ -77,17 +76,17 @@ public class ContainerTooltips {
         }
 
         if (renderedLines >= maxrenderedLines && moreItems > 0) {
-            lines.add(Text.translatable("tooltiptweaks.ui.container.more", moreItems).formatted(Formatting.ITALIC, Formatting.GRAY));
+            lines.add(Component.translatable("tooltiptweaks.ui.container.more", moreItems).withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
         }
     }
 
-    public void register(ItemStack stack, List<Text> lines) {
-        if (stack.contains(DataComponentTypes.CONTAINER_LOOT)) {
+    public void register(ItemStack stack, List<Component> lines) {
+        if (stack.has(DataComponents.CONTAINER_LOOT)) {
             lines.add(UNKNOWN_CONTENTS_TEXT);
         }
 
         var display = config.containerStyle;
-        if (stack.contains(DataComponentTypes.CONTAINER)) {
+        if (stack.has(DataComponents.CONTAINER)) {
             if (display == ContainerStyle.LIST_PER_ITEM) addPerItemTooltips(stack, lines);
             if (display == ContainerStyle.LIST_PER_STACK) addPerStackTooltips(stack, lines);
         }

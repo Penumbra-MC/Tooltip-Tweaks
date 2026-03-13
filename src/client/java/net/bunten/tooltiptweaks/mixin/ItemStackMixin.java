@@ -2,15 +2,12 @@ package net.bunten.tooltiptweaks.mixin;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import net.bunten.tooltiptweaks.config.TooltipTweaksConfig;
-import net.minecraft.component.ComponentType;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.Text;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -29,12 +26,12 @@ public abstract class ItemStackMixin {
     private final TooltipTweaksConfig config = TooltipTweaksConfig.getInstance();
 
     @Unique
-    private Consumer<Text> consumer;
+    private Consumer<Component> consumer;
 
-    @Shadow public abstract boolean hasEnchantments();
+    @Shadow public abstract boolean isEnchanted();
 
-    @ModifyVariable(method = "getTooltip", at = @At("STORE"), ordinal = 0)
-    private Consumer<Text> setConsumer(Consumer<Text> consumer) {
+    @ModifyVariable(method = "getTooltipLines", at = @At("STORE"), ordinal = 0)
+    private Consumer<Component> setConsumer(Consumer<Component> consumer) {
         return this.consumer = consumer;
     }
 
@@ -42,12 +39,20 @@ public abstract class ItemStackMixin {
             method = "method_57370",
             at = @At(value = "INVOKE", target = "java/util/function/Consumer.accept (Ljava/lang/Object;)V")
     )
-    private boolean shouldDisplay(Consumer<Text> instance, Object object) {
-        return object != ScreenTexts.EMPTY || !config.updateEnchantmentTooltips || !hasEnchantments();
+    private boolean shouldDisplay(Consumer<Component> instance, Object object) {
+        return object != CommonComponents.EMPTY || !config.updateEnchantmentTooltips || !isEnchanted();
     }
 
-    @Inject(method = "getTooltip", at = @At(value = "INVOKE", ordinal = 2, target = "Lnet/minecraft/item/ItemStack;appendTooltip(Lnet/minecraft/component/ComponentType;Lnet/minecraft/item/Item$TooltipContext;Ljava/util/function/Consumer;Lnet/minecraft/item/tooltip/TooltipType;)V", shift = At.Shift.AFTER))
-    private void addHeaderIfMissing(Item.TooltipContext context, @Nullable PlayerEntity player, TooltipType type, CallbackInfoReturnable<List<Text>> info) {
-        if (config.updateEnchantmentTooltips && hasEnchantments()) consumer.accept(ScreenTexts.EMPTY);
+    @Inject(
+            method = "getTooltipLines",
+            at = @At(
+                    value = "INVOKE",
+                    ordinal = 2,
+                    target = "Ljava/util/List;add(Ljava/lang/Object;)Z",
+                    shift = At.Shift.AFTER
+            )
+    )
+    private void addHeaderIfMissing(Item.TooltipContext context, Player player, TooltipFlag type, CallbackInfoReturnable<List<Component>> info) {
+        if (config.updateEnchantmentTooltips && isEnchanted()) consumer.accept(CommonComponents.EMPTY);
     }
 }

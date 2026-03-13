@@ -1,7 +1,7 @@
 package net.bunten.tooltiptweaks.config.options;
 
 import dev.isxander.yacl3.api.NameableEnum;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public enum NourishmentDisplay implements NameableEnum {
     NUTRITION_ONLY,
@@ -9,7 +9,7 @@ public enum NourishmentDisplay implements NameableEnum {
     DISABLED;
 
     @Override
-    public Text getDisplayName() {
-        return Text.translatable("tooltiptweaks.value." + name().toLowerCase());
+    public Component getDisplayName() {
+        return Component.translatable("tooltiptweaks.value." + name().toLowerCase());
     }
 }

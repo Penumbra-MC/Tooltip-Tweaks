@@ -2,13 +2,13 @@ package net.bunten.tooltiptweaks.mixin;
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.bunten.tooltiptweaks.config.TooltipTweaksConfig;
-import net.minecraft.component.type.ItemEnchantmentsComponent;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.item.Item;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.function.Consumer;
 
-@Mixin(ItemEnchantmentsComponent.class)
+@Mixin(ItemEnchantments.class)
 public abstract class ItemEnchantmentsComponentMixin {
 
     @Final
@@ -28,18 +28,18 @@ public abstract class ItemEnchantmentsComponentMixin {
 
     @Final
     @Shadow
-    Object2IntOpenHashMap<RegistryEntry<Enchantment>> enchantments;
+    Object2IntOpenHashMap<Holder<Enchantment>> enchantments;
 
-    @Inject(method = "appendTooltip", at = @At("HEAD"))
-    public void addHeader(Item.TooltipContext context, Consumer<Text> tooltip, TooltipType type, CallbackInfo info) {
+    @Inject(method = "addToTooltip", at = @At("HEAD"))
+    public void addHeader(Item.TooltipContext context, Consumer<Component> tooltip, TooltipFlag type, CallbackInfo info) {
         if (TooltipTweaksConfig.getInstance().updateEnchantmentTooltips && showInTooltip && !enchantments.isEmpty()) {
-            tooltip.accept(Text.translatable("tooltiptweaks.ui.enchantments").formatted(Formatting.GRAY));
+            tooltip.accept(Component.translatable("tooltiptweaks.ui.enchantments").withStyle(ChatFormatting.GRAY));
         }
     }
 
-    @ModifyArg(method = "appendTooltip", at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V"), index = 0)
+    @ModifyArg(method = "addToTooltip", at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V"), index = 0)
     private Object addSpacingToEntries(Object object) {
         if (!TooltipTweaksConfig.getInstance().updateEnchantmentTooltips) return object;
-        return Text.literal(" ").append((Text) object);
+        return Component.literal(" ").append((Component) object);
     }
 }

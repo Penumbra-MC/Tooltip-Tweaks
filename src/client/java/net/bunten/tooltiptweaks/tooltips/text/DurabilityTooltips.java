@@ -2,17 +2,16 @@ package net.bunten.tooltiptweaks.tooltips.text;
 
 import com.ibm.icu.text.DecimalFormat;
 import net.bunten.tooltiptweaks.config.TooltipTweaksConfig;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 import java.util.List;
 
 public class DurabilityTooltips {
 
-    private final MinecraftClient client = MinecraftClient.getInstance();
+    private final Minecraft client = Minecraft.getInstance();
     private final TooltipTweaksConfig config = TooltipTweaksConfig.getInstance();
 
     private DecimalFormat getDurabilityDecimalFormat() {
@@ -29,26 +28,26 @@ public class DurabilityTooltips {
 
     private int getDurabilityTextColor(float max, float damage) {
         float f = Math.max(0, (max - damage) / max);
-        return MathHelper.hsvToRgb(f / 3, 1, 1);
+        return Mth.hsvToRgb(f / 3, 1, 1);
     }
 
-    public void register(ItemStack stack, List<Text> lines) {
-        if (!stack.isDamageable() || !stack.isDamaged()) return;
+    public void register(ItemStack stack, List<Component> lines) {
+        if (!stack.isDamageableItem() || !stack.isDamaged()) return;
 
         float max = stack.getMaxDamage();
-        float damage = stack.getDamage();
+        float damage = stack.getDamageValue();
 
         float durability = max - damage;
         float percent = (durability / max) * 100;
 
-        MutableText message;
+        MutableComponent message;
         switch (config.durabilityStyle) {
             case PERCENTAGE:
-                message = Text.translatable("tooltiptweaks.ui.durability", getDurabilityDecimalFormat().format(percent) + "%");
+                message = Component.translatable("tooltiptweaks.ui.durability", getDurabilityDecimalFormat().format(percent) + "%");
                 lines.add(message.setStyle(message.getStyle().withColor(getDurabilityTextColor(max, damage))));
                 break;
             case FRACTION:
-                message = Text.translatable("tooltiptweaks.ui.durability", (int) durability + " / " + (int) max);
+                message = Component.translatable("tooltiptweaks.ui.durability", (int) durability + " / " + (int) max);
                 lines.add(message.setStyle(message.getStyle().withColor(getDurabilityTextColor(max, damage))));
                 break;
             default:
@@ -56,7 +55,7 @@ public class DurabilityTooltips {
         }
 
         if (config.displayUsesLeft && percent <= 25) {
-            message = Text.translatable("tooltiptweaks.ui.uses_left", new DecimalFormat("#").format(durability));
+            message = Component.translatable("tooltiptweaks.ui.uses_left", new DecimalFormat("#").format(durability));
             lines.add(message.setStyle(message.getStyle().withColor(getDurabilityTextColor(max, damage))));
         }
     }

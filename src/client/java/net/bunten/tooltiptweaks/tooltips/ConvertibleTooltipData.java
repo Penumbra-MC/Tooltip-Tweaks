@@ -2,16 +2,16 @@ package net.bunten.tooltiptweaks.tooltips;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.tooltip.TooltipComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipData;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.item.ItemStack;
 
-public interface ConvertibleTooltipData extends TooltipData {
+public interface ConvertibleTooltipData extends TooltipComponent {
 
     boolean canDisplay(ItemStack stack);
 
     ConvertibleTooltipData withStack(ItemStack stack);
 
     @Environment(EnvType.CLIENT)
-    TooltipComponent getComponent();
+    ClientTooltipComponent getComponent();
 }

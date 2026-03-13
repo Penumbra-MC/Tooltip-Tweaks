@@ -1,11 +1,11 @@
 package net.bunten.tooltiptweaks.mixin;
 
 import net.bunten.tooltiptweaks.config.TooltipTweaksConfig;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.PotionItem;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.PotionItem;
+import net.minecraft.world.item.TooltipFlag;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -16,15 +16,15 @@ import java.util.List;
 @Mixin(PotionItem.class)
 public abstract class PotionItemMixin extends Item {
 
-    public PotionItemMixin(Settings settings) {
+    public PotionItemMixin(Properties settings) {
         super(settings);
     }
 
-    @Inject(method = "appendTooltip", at = @At("HEAD"), cancellable = true)
-    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type, CallbackInfo info) {
+    @Inject(method = "appendHoverText", at = @At("HEAD"), cancellable = true)
+    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag type, CallbackInfo info) {
         if (TooltipTweaksConfig.getInstance().updatePotionTooltips) {
             info.cancel();
-            super.appendTooltip(stack, context, tooltip, type);
+            super.appendHoverText(stack, context, tooltip, type);
         }
     }
 }

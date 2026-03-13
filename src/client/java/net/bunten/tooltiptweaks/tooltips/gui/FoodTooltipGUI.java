@@ -6,34 +6,34 @@ import net.bunten.tooltiptweaks.config.options.IconLocation;
 import net.bunten.tooltiptweaks.config.options.NourishmentDisplay;
 import net.bunten.tooltiptweaks.config.options.NourishmentStyle;
 import net.bunten.tooltiptweaks.tooltips.AbstractTooltip;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.FoodComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 import static net.bunten.tooltiptweaks.TooltipTweaksMod.id;
 
 public class FoodTooltipGUI extends AbstractTooltip {
 
     private ItemStack stack;
-    private FoodComponent component;
+    private FoodProperties component;
 
     private final TooltipTweaksConfig config = TooltipTweaksConfig.getInstance();
 
-    private static final Identifier FOOD_HALF_TEXTURE = Identifier.ofVanilla("hud/food_half");
-    private static final Identifier FOOD_FULL_TEXTURE = Identifier.ofVanilla("hud/food_full");
+    private static final ResourceLocation FOOD_HALF_TEXTURE = ResourceLocation.withDefaultNamespace("hud/food_half");
+    private static final ResourceLocation FOOD_FULL_TEXTURE = ResourceLocation.withDefaultNamespace("hud/food_full");
 
-    private static final Identifier SATURATION_HALF_TEXTURE = id("hud/saturation_half");
-    private static final Identifier SATURATION_FULL_TEXTURE = id("hud/saturation_full");
+    private static final ResourceLocation SATURATION_HALF_TEXTURE = id("hud/saturation_half");
+    private static final ResourceLocation SATURATION_FULL_TEXTURE = id("hud/saturation_full");
 
     @Override
     public AbstractTooltip withStack(ItemStack stack) {
         this.stack = stack;
-        this.component = stack.get(DataComponentTypes.FOOD);
+        this.component = stack.get(DataComponents.FOOD);
         return this;
     }
 
@@ -41,13 +41,13 @@ public class FoodTooltipGUI extends AbstractTooltip {
     public boolean canDisplay(ItemStack stack) {
         if (config.nourishmentStyle != NourishmentStyle.ICONS) return false;
         if (config.nourishmentDisplay == NourishmentDisplay.DISABLED) return false;
-        if (stack.isOf(Items.OMINOUS_BOTTLE)) return false;
-        return stack.getComponents().contains(DataComponentTypes.FOOD) || stack.isOf(Items.CAKE);
+        if (stack.is(Items.OMINOUS_BOTTLE)) return false;
+        return stack.getComponents().has(DataComponents.FOOD) || stack.is(Items.CAKE);
     }
 
     @Override
-    public int getWidth(TextRenderer textRenderer) {
-        int offset = config.nourishmentIconLocation == IconLocation.BELOW ? 0 : textRenderer.getWidth(stack.getName());
+    public int getWidth(Font textRenderer) {
+        int offset = config.nourishmentIconLocation == IconLocation.BELOW ? 0 : textRenderer.width(stack.getHoverName());
         int width = getNutrition() * 4;
 
         if (config.nourishmentDisplay == NourishmentDisplay.NUTRITION_AND_SATURATION) width = Math.max(width, getSaturation() * 4);
@@ -56,24 +56,24 @@ public class FoodTooltipGUI extends AbstractTooltip {
     }
 
     @Override
-    public int getHeight(TextRenderer textRenderer) {
+    public int getHeight(Font textRenderer) {
         return (config.nourishmentIconLocation == IconLocation.BELOW) ? 12 : 0;
     }
 
     private int getNutrition() {
-        return stack.isOf(Items.CAKE) ? 14 : component.nutrition();
+        return stack.is(Items.CAKE) ? 14 : component.nutrition();
     }
 
     private int getSaturation() {
-        float value = stack.isOf(Items.CAKE) ? 2.8F : component.saturation();
+        float value = stack.is(Items.CAKE) ? 2.8F : component.saturation();
         return (int) value;
     }
 
     @Override
-    public void drawItems(TextRenderer textRenderer, int x, int y, int width, int height, DrawContext context) {
+    public void renderImage(Font textRenderer, int x, int y, int width, int height, GuiGraphics context) {
         RenderSystem.enableBlend();
 
-        int xOffset = (config.nourishmentIconLocation == IconLocation.BESIDE) ? textRenderer.getWidth(stack.getName()) + 2 : 0;
+        int xOffset = (config.nourishmentIconLocation == IconLocation.BESIDE) ? textRenderer.width(stack.getHoverName()) + 2 : 0;
         int yOffset = (config.nourishmentIconLocation == IconLocation.BESIDE) ? -12 : 0;
 
         int rx = x + xOffset;
@@ -82,20 +82,20 @@ public class FoodTooltipGUI extends AbstractTooltip {
         for (int index = 0; index < 10; index++) {
 
             if (index * 2 + 1 < getNutrition()) {
-                context.drawGuiTexture(RenderLayer::getGuiTextured, FOOD_FULL_TEXTURE, rx + index * 8, ry, 9, 9);
+                context.blitSprite(RenderType::guiTextured, FOOD_FULL_TEXTURE, rx + index * 8, ry, 9, 9);
             }
 
             if (index * 2 + 1 == getNutrition()) {
-                context.drawGuiTexture(RenderLayer::getGuiTextured, FOOD_HALF_TEXTURE, rx + index * 8, ry, 9, 9);
+                context.blitSprite(RenderType::guiTextured, FOOD_HALF_TEXTURE, rx + index * 8, ry, 9, 9);
             }
 
             if (config.nourishmentDisplay == NourishmentDisplay.NUTRITION_AND_SATURATION) {
                 if (index * 2 + 1 < getSaturation()) {
-                    context.drawGuiTexture(RenderLayer::getGuiTextured, SATURATION_FULL_TEXTURE, rx + index * 8, ry, 9, 9);
+                    context.blitSprite(RenderType::guiTextured, SATURATION_FULL_TEXTURE, rx + index * 8, ry, 9, 9);
                 }
 
                 if (index * 2 + 1 == getSaturation()) {
-                    context.drawGuiTexture(RenderLayer::getGuiTextured, SATURATION_HALF_TEXTURE, rx + index * 8, ry, 9, 9);
+                    context.blitSprite(RenderType::guiTextured, SATURATION_HALF_TEXTURE, rx + index * 8, ry, 9, 9);
                 }
             }
         }
