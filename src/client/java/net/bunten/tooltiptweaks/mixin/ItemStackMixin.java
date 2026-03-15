@@ -1,6 +1,5 @@
 package net.bunten.tooltiptweaks.mixin;
 
-import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import net.bunten.tooltiptweaks.config.TooltipTweaksConfig;
 import net.bunten.tooltiptweaks.tooltips.text.*;
 import net.minecraft.network.chat.CommonComponents;
@@ -23,22 +22,30 @@ import java.util.function.Consumer;
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
 
-    @Shadow public abstract boolean isEnchanted();
-
     @Unique private static final TooltipTweaksConfig config = TooltipTweaksConfig.getInstance();
+    @Unique private final ItemStack stack = (ItemStack) (Object) this;
     @Unique private List<Component> lines;
 
+    @Shadow public abstract boolean isEnchanted();
+
     @ModifyVariable(method = "getTooltipLines", at = @At("STORE"), ordinal = 0)
-    private List<Component> setConsumer(List<Component> lines) {
+    private List<Component> TooltipTweaks$saveLinesLocally(List<Component> lines) {
         return this.lines = lines;
     }
 
-    @WrapWithCondition(
-            method = "method_57370",
-            at = @At(value = "INVOKE", target = "java/util/function/Consumer.accept (Ljava/lang/Object;)V", ordinal = 0)
+    @ModifyVariable(
+            method = "addAttributeTooltips",
+            at = @At("HEAD"),
+            argsOnly = true
     )
-    private static boolean shouldDisplay(Consumer<Component> instance, Object object) {
-        return object != CommonComponents.EMPTY || !config.updateEnchantmentTooltips;
+    private Consumer<Component> TooltipTweaks$wrapConsumer(Consumer<Component> original) {
+        List<Component> tooltipLines = this.lines;
+
+        return component -> {
+            if (component != CommonComponents.EMPTY || config.updateEnchantmentTooltips && !tooltipLines.contains(CommonComponents.EMPTY)) {
+                original.accept(component);
+            }
+        };
     }
 
     @Inject(
@@ -49,8 +56,7 @@ public abstract class ItemStackMixin {
                     shift = At.Shift.AFTER
             )
     )
-    private void addHeaderIfMissing(Item.TooltipContext context, Player player, TooltipFlag type, CallbackInfoReturnable<List<Component>> info) {
-        ItemStack stack = (ItemStack) (Object) this;
+    private void TooltipTweaks$addLines(Item.TooltipContext context, Player player, TooltipFlag type, CallbackInfoReturnable<List<Component>> info) {
         if (config.updateEnchantmentTooltips && isEnchanted()) lines.add(CommonComponents.EMPTY);
 
         new DurabilityTooltips().register(stack, lines);
