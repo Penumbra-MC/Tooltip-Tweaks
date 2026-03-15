@@ -1,6 +1,6 @@
 package net.bunten.tooltiptweaks.tooltips.gui;
 
-import net.bunten.tooltiptweaks.TooltipTweaksMod;
+import net.bunten.tooltiptweaks.TooltipTweaks;
 import net.bunten.tooltiptweaks.config.TooltipTweaksConfig;
 import net.bunten.tooltiptweaks.config.options.IconLocation;
 import net.bunten.tooltiptweaks.config.options.NourishmentDisplay;
@@ -25,8 +25,8 @@ public class FoodTooltipGUI extends AbstractTooltip {
     private static final Identifier FOOD_HALF_TEXTURE = Identifier.withDefaultNamespace("hud/food_half");
     private static final Identifier FOOD_FULL_TEXTURE = Identifier.withDefaultNamespace("hud/food_full");
 
-    private static final Identifier SATURATION_HALF_TEXTURE = TooltipTweaksMod.id("hud/saturation_half");
-    private static final Identifier SATURATION_FULL_TEXTURE = TooltipTweaksMod.id("hud/saturation_full");
+    private static final Identifier SATURATION_HALF_TEXTURE = TooltipTweaks.id("hud/saturation_half");
+    private static final Identifier SATURATION_FULL_TEXTURE = TooltipTweaks.id("hud/saturation_full");
 
     @Override
     public AbstractTooltip withStack(ItemStack stack) {

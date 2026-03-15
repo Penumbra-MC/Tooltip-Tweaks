@@ -7,14 +7,12 @@ import net.bunten.tooltiptweaks.config.options.OtherEffectDisplay;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffectUtil;
-import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.effect.*;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
@@ -28,10 +26,11 @@ import net.minecraft.world.item.component.OminousBottleAmplifier;
 import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
 import net.minecraft.world.item.consume_effects.ClearAllStatusEffectsConsumeEffect;
 import net.minecraft.world.item.consume_effects.RemoveStatusEffectsConsumeEffect;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.bunten.tooltiptweaks.TooltipTweaksMod.creative;
+import static net.bunten.tooltiptweaks.TooltipTweaks.creative;
 import static net.bunten.tooltiptweaks.tooltips.CommonText.*;
 
 public class StatusEffectTooltips {
@@ -112,7 +111,7 @@ public class StatusEffectTooltips {
             return;
         }
 
-        List<MobEffectInstance> filtered = statusEffects.stream().filter((instance) -> style == EffectDisplay.POSITIVE_EFFECTS_ONLY && !creative() ? instance.getEffect().value().getCategory() != MobEffectCategory.HARMFUL : true).toList();
+        List<MobEffectInstance> filtered = statusEffects.stream().filter((instance) -> style != EffectDisplay.POSITIVE_EFFECTS_ONLY || creative() || instance.getEffect().value().getCategory() != MobEffectCategory.HARMFUL).toList();
 
         if (!filtered.isEmpty()) {
             addStatusEffectHeader(lines);
@@ -143,8 +142,8 @@ public class StatusEffectTooltips {
             Consumable component = stack.get(DataComponents.CONSUMABLE);
 
             component.onConsumeEffects().forEach((effect) -> {
-                if (effect instanceof RemoveStatusEffectsConsumeEffect remove) {
-                    remove.effects().forEach((entry) -> {
+                if (effect instanceof RemoveStatusEffectsConsumeEffect(HolderSet<MobEffect> effects)) {
+                    effects.forEach((entry) -> {
                         addStatusEffectHeader(lines);
                         lines.add(Component.literal(" ").append(Component.translatable("tooltiptweaks.ui.removes_prefix", Component.translatable(entry.value().getDescriptionId())).withStyle(NEUTRAL_STATUS_EFFECT_COLOR)));
                     });

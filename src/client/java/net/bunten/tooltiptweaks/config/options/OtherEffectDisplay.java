@@ -3,7 +3,7 @@ package net.bunten.tooltiptweaks.config.options;
 import dev.isxander.yacl3.api.NameableEnum;
 import net.minecraft.network.chat.Component;
 
-import static net.bunten.tooltiptweaks.TooltipTweaksMod.creative;
+import static net.bunten.tooltiptweaks.TooltipTweaks.creative;
 
 public enum OtherEffectDisplay implements NameableEnum {
     ENABLED,

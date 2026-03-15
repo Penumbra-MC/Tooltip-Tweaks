@@ -1,11 +1,11 @@
 package net.bunten.tooltiptweaks.tooltips;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class CommonText {
 

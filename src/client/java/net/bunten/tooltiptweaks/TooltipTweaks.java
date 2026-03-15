@@ -10,7 +10,7 @@ import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TooltipTweaksMod implements ClientModInitializer {
+public class TooltipTweaks implements ClientModInitializer {
     public static final String MOD_ID = "tooltiptweaks";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 

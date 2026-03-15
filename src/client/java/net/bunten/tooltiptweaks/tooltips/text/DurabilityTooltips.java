@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+
 import java.util.List;
 
 public class DurabilityTooltips {
@@ -15,15 +16,16 @@ public class DurabilityTooltips {
     private final TooltipTweaksConfig config = TooltipTweaksConfig.getInstance();
 
     private DecimalFormat getDurabilityDecimalFormat() {
-        String string = "#";
+        StringBuilder string = new StringBuilder("#");
+
         for (int i = 0; i < config.percentageDigits; i++) {
             if (i == 0) {
-                string += ".";
+                string.append(".");
             }
-            string += "#";
+            string.append("#");
         }
 
-        return new DecimalFormat(string);
+        return new DecimalFormat(string.toString());
     }
 
     private int getDurabilityTextColor(float max, float damage) {

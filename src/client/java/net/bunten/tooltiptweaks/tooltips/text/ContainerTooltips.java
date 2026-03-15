@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class ContainerTooltips {
     private static final Component UNKNOWN_CONTENTS_TEXT = Component.translatable("container.shulkerBox.unknownContents");
 
     private final NonNullList<ItemStack> INVENTORY = NonNullList.withSize(27, ItemStack.EMPTY);
-    private final LinkedHashMap<Item, Integer> ITEM_COUNT_MAP = new LinkedHashMap<Item, Integer>();
+    private final LinkedHashMap<Item, Integer> ITEM_COUNT_MAP = new LinkedHashMap<>();
 
     private final Minecraft client = Minecraft.getInstance();
     private final TooltipTweaksConfig config = TooltipTweaksConfig.getInstance();

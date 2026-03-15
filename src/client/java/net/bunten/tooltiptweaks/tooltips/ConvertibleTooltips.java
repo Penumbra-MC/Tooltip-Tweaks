@@ -1,16 +1,20 @@
 package net.bunten.tooltiptweaks.tooltips;
 
-import net.bunten.tooltiptweaks.tooltips.gui.*;
+import net.bunten.tooltiptweaks.tooltips.gui.ContainerTooltipGUI;
+import net.bunten.tooltiptweaks.tooltips.gui.FoodTooltipGUI;
+import net.bunten.tooltiptweaks.tooltips.gui.MapTooltipGUI;
+import net.bunten.tooltiptweaks.tooltips.gui.PaintingTooltipGUI;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 
-import static net.bunten.tooltiptweaks.TooltipTweaksMod.id;
+import static net.bunten.tooltiptweaks.TooltipTweaks.id;
 
 public class ConvertibleTooltips {
 
-    public static final MappedRegistry<ConvertibleTooltipData> CONVERTIBLE_TOOLTIP_DATA_REGISTRY = FabricRegistryBuilder.createSimple(ConvertibleTooltipData.class, id("convertible_tooltip")).attribute(RegistryAttribute.SYNCED).buildAndRegister();
+    public static final MappedRegistry<ConvertibleTooltipData> CONVERTIBLE_TOOLTIP_DATA_REGISTRY = FabricRegistryBuilder.<ConvertibleTooltipData>createSimple(ResourceKey.createRegistryKey(id("convertible_tooltip"))).attribute(RegistryAttribute.SYNCED).buildAndRegister();
 
     public static final ConvertibleTooltipData CONTAINER = register("container", new ContainerTooltipGUI());
     public static final ConvertibleTooltipData FOOD = register("food", new FoodTooltipGUI());

@@ -24,7 +24,7 @@
     "environment": "client",
     "entrypoints": {
         "client": [
-            "net.bunten.tooltiptweaks.TooltipTweaksMod"
+            "net.bunten.tooltiptweaks.TooltipTweaks"
         ],
         "modmenu": [
             "net.bunten.tooltiptweaks.config.TooltipModMenu"

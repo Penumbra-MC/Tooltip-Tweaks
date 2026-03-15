@@ -1,6 +1,6 @@
 package net.bunten.tooltiptweaks.tooltips.gui;
 
-import net.bunten.tooltiptweaks.TooltipTweaksMod;
+import net.bunten.tooltiptweaks.TooltipTweaks;
 import net.bunten.tooltiptweaks.config.TooltipTweaksConfig;
 import net.bunten.tooltiptweaks.config.options.ContainerStyle;
 import net.bunten.tooltiptweaks.tooltips.AbstractTooltip;
@@ -47,7 +47,7 @@ public class ContainerTooltipGUI extends AbstractTooltip {
     public void renderImage(Font font, int x, int y, int width, int height, GuiGraphics graphics) {
         if (isEmpty()) return;
 
-        graphics.blit(RenderPipelines.GUI_TEXTURED, TooltipTweaksMod.id("textures/gui/container.png"), x, y, 0, 0, 172, 64, 256, 128);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TooltipTweaks.id("textures/gui/container.png"), x, y, 0, 0, 172, 64, 256, 128);
 
         int xOffset = 2;
         int yOffset = -16;

@@ -13,11 +13,11 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
-import static net.bunten.tooltiptweaks.TooltipTweaksMod.id;
+import static net.bunten.tooltiptweaks.TooltipTweaks.id;
 
 public class TooltipTweaksConfig {
 
-    public static ConfigClassHandler<TooltipTweaksConfig> HANDLER = ConfigClassHandler.createBuilder(TooltipTweaksConfig.class)
+    public static final ConfigClassHandler<TooltipTweaksConfig> HANDLER = ConfigClassHandler.createBuilder(TooltipTweaksConfig.class)
             .id(id("config"))
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
                     .setPath(FabricLoader.getInstance().getConfigDir().resolve("tooltiptweaks.json5"))

@@ -11,9 +11,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+
 import java.util.List;
 
-import static net.bunten.tooltiptweaks.TooltipTweaksMod.creative;
+import static net.bunten.tooltiptweaks.TooltipTweaks.creative;
 
 public class RepairCostTooltip {
 
