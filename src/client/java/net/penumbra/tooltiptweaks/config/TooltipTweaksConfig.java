@@ -44,7 +44,7 @@ public class TooltipTweaksConfig {
 
     @SerialEntry public ClockTimeDisplay clockTimeDisplay = ClockTimeDisplay.TWELVE_HOUR;
     @SerialEntry public ContainerStyle containerStyle = ContainerStyle.LIST_PER_ITEM;
-    @SerialEntry public CrossbowDisplay updateCrossbowTooltips = CrossbowDisplay.WHITE_ITEM_TEXT;
+    @SerialEntry public CrossbowDisplay crossbowDisplay = CrossbowDisplay.WHITE_ITEM_TEXT;
     @SerialEntry public DurabilityStyle durabilityStyle = DurabilityStyle.PERCENTAGE;
     @SerialEntry public DurabilityTextColor durabilityTextColor = DurabilityTextColor.MULTICOLOR;
     @SerialEntry public EffectDisplay foodEffectDisplay = EffectDisplay.POSITIVE_EFFECTS_ONLY;

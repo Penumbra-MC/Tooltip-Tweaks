@@ -138,7 +138,7 @@ public class TooltipModMenu implements ModMenuApi {
 
         Option<?> updateCrossbowTooltips = Option.<CrossbowDisplay>createBuilder()
                 .name(Component.translatable("tooltiptweaks.option.update_crossbow_tooltips"))
-                .binding(defaults.updateCrossbowTooltips, () -> config.updateCrossbowTooltips, value -> config.updateCrossbowTooltips = value)
+                .binding(defaults.crossbowDisplay, () -> config.crossbowDisplay, value -> config.crossbowDisplay = value)
                 .description(OptionDescription.createBuilder().text(Component.translatable("tooltiptweaks.option.update_crossbow_tooltips.desc")).webpImage(id("textures/gui/previews/update_crossbow_tooltips.webp")).build())
                 .controller(opt -> EnumControllerBuilder.create(opt).enumClass(CrossbowDisplay.class))
                 .build();
