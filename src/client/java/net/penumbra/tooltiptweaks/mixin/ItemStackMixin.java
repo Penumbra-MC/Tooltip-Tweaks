@@ -2,6 +2,7 @@ package net.penumbra.tooltiptweaks.mixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -11,6 +12,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.penumbra.tooltiptweaks.TooltipTweaks;
 import net.penumbra.tooltiptweaks.config.TooltipTweaksConfig;
+import net.penumbra.tooltiptweaks.config.options.EffectDisplay;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -72,7 +74,12 @@ public abstract class ItemStackMixin {
             )
     )
     private void TooltipTweaks$appendAfterHoverText(Item instance, ItemStack stackInstance, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> consumer, TooltipFlag flag, Operation<Void> original) {
-        original.call(instance, stackInstance, context, display, consumer, flag);
+        boolean farmersdelightFood = stackInstance.getCreatorNamespace().equals("farmersdelight") && stackInstance.has(DataComponents.FOOD) && stackInstance.has(DataComponents.CONSUMABLE) && !config.foodEffectDisplay.equals(EffectDisplay.DISABLED);
+
+        if (!farmersdelightFood) {
+            original.call(instance, stackInstance, context, display, consumer, flag);
+        }
+
         TooltipTweaks.appendAfterHoverText(stack, lines);
     }
 
