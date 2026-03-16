@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.MobBucketItem;
 import net.penumbra.tooltiptweaks.config.options.NourishmentDisplay;
 import net.penumbra.tooltiptweaks.config.options.NourishmentStyle;
 
@@ -18,7 +19,7 @@ public class NutritionTooltips implements TooltipProvider {
 
     @Override
     public void register(ItemStack stack, List<Component> lines) {
-        if (stack.is(Items.OMINOUS_BOTTLE) || config.nourishmentStyle != NourishmentStyle.TEXT) return;
+        if (stack.getItem() instanceof MobBucketItem || stack.is(Items.OMINOUS_BOTTLE) || config.nourishmentStyle != NourishmentStyle.TEXT) return;
 
         if (stack.is(Items.CAKE) && config.nourishmentDisplay != NourishmentDisplay.DISABLED) {
             addConsumedHeader(lines, true);
