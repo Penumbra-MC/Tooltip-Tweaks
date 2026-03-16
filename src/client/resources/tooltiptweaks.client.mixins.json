@@ -8,7 +8,6 @@
     "client": [
         "ChargedProjectilesMixin",
         "ClientTooltipComponentMixin",
-        "EnchantmentMixin",
         "ItemContainerContentsMixin",
         "ItemEnchantmentsMixin",
         "ItemMixin",

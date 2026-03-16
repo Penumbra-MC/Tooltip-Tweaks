@@ -39,10 +39,8 @@ public abstract class ItemStackMixin {
             argsOnly = true
     )
     private Consumer<Component> TooltipTweaks$wrapConsumer(Consumer<Component> original) {
-        List<Component> tooltipLines = this.lines;
-
         return component -> {
-            if (component != CommonComponents.EMPTY || config.updateEnchantmentTooltips && !tooltipLines.contains(CommonComponents.EMPTY)) {
+            if (component != CommonComponents.EMPTY || !lines.contains(CommonComponents.EMPTY)) {
                 original.accept(component);
             }
         };
