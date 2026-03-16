@@ -12,9 +12,8 @@ import net.penumbra.tooltiptweaks.TooltipTweaks;
 import net.penumbra.tooltiptweaks.config.options.IconLocation;
 import net.penumbra.tooltiptweaks.config.options.NourishmentDisplay;
 import net.penumbra.tooltiptweaks.config.options.NourishmentStyle;
-import net.penumbra.tooltiptweaks.tooltips.AbstractTooltip;
 
-public class FoodTooltipGUI extends AbstractTooltip {
+public class FoodGuiTooltip implements GuiTooltipProvider {
 
     private ItemStack stack;
     private FoodProperties component;
@@ -26,7 +25,7 @@ public class FoodTooltipGUI extends AbstractTooltip {
     private static final Identifier SATURATION_FULL_TEXTURE = TooltipTweaks.id("hud/saturation_full");
 
     @Override
-    public AbstractTooltip withStack(ItemStack stack) {
+    public GuiTooltipProvider withStack(ItemStack stack) {
         this.stack = stack;
         this.component = stack.get(DataComponents.FOOD);
         return this;
@@ -40,8 +39,8 @@ public class FoodTooltipGUI extends AbstractTooltip {
     }
 
     @Override
-    public int getWidth(Font textRenderer) {
-        int offset = config.nourishmentIconLocation == IconLocation.BELOW ? 0 : textRenderer.width(stack.getHoverName());
+    public int getWidth(Font font) {
+        int offset = config.nourishmentIconLocation == IconLocation.BELOW ? 0 : font.width(stack.getHoverName());
         int width = getNutrition() * 4;
 
         if (config.nourishmentDisplay == NourishmentDisplay.NUTRITION_AND_SATURATION) width = Math.max(width, getSaturation() * 4);
@@ -50,7 +49,7 @@ public class FoodTooltipGUI extends AbstractTooltip {
     }
 
     @Override
-    public int getHeight(Font textRenderer) {
+    public int getHeight(Font font) {
         return (config.nourishmentIconLocation == IconLocation.BELOW) ? 12 : 0;
     }
 

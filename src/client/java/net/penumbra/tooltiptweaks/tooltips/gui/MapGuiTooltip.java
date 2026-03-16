@@ -11,10 +11,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.MapItem;
 import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
-import net.penumbra.tooltiptweaks.tooltips.AbstractTooltip;
 import org.jetbrains.annotations.Nullable;
 
-public class MapTooltipGUI extends AbstractTooltip {
+public class MapGuiTooltip implements GuiTooltipProvider {
 
     private final MapRenderState mapRenderState = new MapRenderState();
 
@@ -27,7 +26,7 @@ public class MapTooltipGUI extends AbstractTooltip {
     }
 
     @Override
-    public AbstractTooltip withStack(ItemStack stack) {
+    public GuiTooltipProvider withStack(ItemStack stack) {
         mapId = stack.get(DataComponents.MAP_ID);
         return this;
     }
@@ -38,12 +37,12 @@ public class MapTooltipGUI extends AbstractTooltip {
     }
 
     @Override
-    public int getWidth(Font textRenderer) {
+    public int getWidth(Font font) {
         return getMapItemSavedData() != null ? 66 : 0;
     }
 
     @Override
-    public int getHeight(Font textRenderer) {
+    public int getHeight(Font font) {
         return getMapItemSavedData() != null ? 69 : 0;
     }
 

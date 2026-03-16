@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
-public class AxolotlVariantTooltip implements TooltipProvider {
+public class AxolotlVariantTooltip implements TextTooltipProvider {
 
     @Override
     public void register(ItemStack stack, List<Component> lines) {

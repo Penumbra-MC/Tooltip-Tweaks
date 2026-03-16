@@ -16,7 +16,7 @@ import net.penumbra.tooltiptweaks.config.options.ClockTimeDisplay;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClockTooltips implements TooltipProvider {
+public class ClockTooltips implements TextTooltipProvider {
 
     private static final Component UNKNOWN_TEXT = Component.translatable("tooltiptweaks.ui.unknown");
 

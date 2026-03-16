@@ -7,7 +7,7 @@ import net.penumbra.tooltiptweaks.config.TooltipTweaksConfig;
 
 import java.util.List;
 
-public interface TooltipProvider {
+public interface TextTooltipProvider {
 
     TooltipTweaksConfig config = TooltipTweaksConfig.getInstance();
     Minecraft minecraft = Minecraft.getInstance();

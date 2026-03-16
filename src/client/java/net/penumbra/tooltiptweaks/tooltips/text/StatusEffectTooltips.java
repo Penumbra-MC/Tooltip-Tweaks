@@ -29,9 +29,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static net.penumbra.tooltiptweaks.TooltipTweaks.creative;
-import static net.penumbra.tooltiptweaks.tooltips.CommonText.*;
+import static net.penumbra.tooltiptweaks.tooltips.TooltipTweaksComponents.*;
 
-public class StatusEffectTooltips implements TooltipProvider {
+public class StatusEffectTooltips implements TextTooltipProvider {
 
     private List<MobEffectInstance> statusEffects;
     private EffectDisplay style;

@@ -13,7 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ContainerTooltips implements TooltipProvider {
+public class ContainerTooltips implements TextTooltipProvider {
 
     private static final Component UNKNOWN_CONTENTS_TEXT = Component.translatable("container.shulkerBox.unknownContents");
     private final LinkedHashMap<Item, Integer> ITEM_COUNT_MAP = new LinkedHashMap<>();

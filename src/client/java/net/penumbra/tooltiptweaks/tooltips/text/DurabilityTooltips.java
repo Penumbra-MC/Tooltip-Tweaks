@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
-public class DurabilityTooltips implements TooltipProvider {
+public class DurabilityTooltips implements TextTooltipProvider {
 
     @Override
     public void register(ItemStack stack, List<Component> lines) {

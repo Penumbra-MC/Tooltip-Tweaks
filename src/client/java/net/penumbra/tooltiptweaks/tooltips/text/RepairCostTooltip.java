@@ -14,7 +14,7 @@ import java.util.List;
 
 import static net.penumbra.tooltiptweaks.TooltipTweaks.creative;
 
-public class RepairCostTooltip implements TooltipProvider {
+public class RepairCostTooltip implements TextTooltipProvider {
 
     @Override
     public void register(ItemStack stack, List<Component> lines) {

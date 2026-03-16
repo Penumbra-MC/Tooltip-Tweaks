@@ -7,7 +7,7 @@ import net.minecraft.network.chat.MutableComponent;
 import java.util.Arrays;
 import java.util.List;
 
-public class CommonText {
+public class TooltipTweaksComponents {
 
     public static final ChatFormatting NUTRITION_COLOR = ChatFormatting.GOLD;
     

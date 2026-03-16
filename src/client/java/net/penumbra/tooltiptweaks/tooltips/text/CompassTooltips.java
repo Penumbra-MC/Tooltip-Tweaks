@@ -21,7 +21,7 @@ import net.penumbra.tooltiptweaks.TooltipTweaks;
 import java.util.List;
 import java.util.Optional;
 
-public class CompassTooltips implements TooltipProvider {
+public class CompassTooltips implements TextTooltipProvider {
 
     @Override
     public void register(ItemStack stack, List<Component> lines) {

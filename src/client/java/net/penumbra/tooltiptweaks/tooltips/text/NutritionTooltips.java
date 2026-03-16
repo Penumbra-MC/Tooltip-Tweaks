@@ -11,10 +11,10 @@ import net.penumbra.tooltiptweaks.config.options.NourishmentStyle;
 import java.text.DecimalFormat;
 import java.util.List;
 
-import static net.penumbra.tooltiptweaks.tooltips.CommonText.NUTRITION_COLOR;
-import static net.penumbra.tooltiptweaks.tooltips.CommonText.addConsumedHeader;
+import static net.penumbra.tooltiptweaks.tooltips.TooltipTweaksComponents.NUTRITION_COLOR;
+import static net.penumbra.tooltiptweaks.tooltips.TooltipTweaksComponents.addConsumedHeader;
 
-public class NutritionTooltips implements TooltipProvider {
+public class NutritionTooltips implements TextTooltipProvider {
 
     @Override
     public void register(ItemStack stack, List<Component> lines) {

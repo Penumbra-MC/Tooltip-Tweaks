@@ -8,16 +8,15 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.decoration.painting.PaintingVariant;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.penumbra.tooltiptweaks.tooltips.AbstractTooltip;
 
 import static net.minecraft.core.component.DataComponents.PAINTING_VARIANT;
 
-public class PaintingTooltipGUI extends AbstractTooltip {
+public class PaintingGuiTooltip implements GuiTooltipProvider {
 
     private PaintingVariant variant;
 
     @Override
-    public AbstractTooltip withStack(ItemStack stack) {
+    public GuiTooltipProvider withStack(ItemStack stack) {
         return this;
     }
 
@@ -36,12 +35,12 @@ public class PaintingTooltipGUI extends AbstractTooltip {
     }
 
     @Override
-    public int getWidth(Font textRenderer) {
+    public int getWidth(Font font) {
         return (variant.width() * 16) + 6;
     }
 
     @Override
-    public int getHeight(Font textRenderer) {
+    public int getHeight(Font font) {
         return (variant.height() * 16) + 6;
     }
 

@@ -20,7 +20,7 @@ import java.util.Set;
 import static net.minecraft.world.level.block.SkullBlock.Types.DRAGON;
 import static net.minecraft.world.level.block.SkullBlock.Types.PLAYER;
 
-public class InstrumentTooltip implements TooltipProvider {
+public class InstrumentTooltip implements TextTooltipProvider {
 
     @Override
     public void register(ItemStack stack, List<Component> lines) {

@@ -8,16 +8,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.penumbra.tooltiptweaks.TooltipTweaks;
 import net.penumbra.tooltiptweaks.config.options.ContainerStyle;
-import net.penumbra.tooltiptweaks.tooltips.AbstractTooltip;
 
 import java.util.List;
 
-public class ContainerTooltipGUI extends AbstractTooltip {
+public class ContainerGuiTooltip implements GuiTooltipProvider {
 
     private ItemContainerContents component;
 
     @Override
-    public AbstractTooltip withStack(ItemStack stack) {
+    public GuiTooltipProvider withStack(ItemStack stack) {
         component = stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
         return this;
     }
@@ -32,13 +31,13 @@ public class ContainerTooltipGUI extends AbstractTooltip {
     }
 
     @Override
-    public int getHeight(Font textRenderer) {
+    public int getHeight(Font font) {
         if (isEmpty()) return 0;
         return 59;
     }
 
     @Override
-    public int getWidth(Font textRenderer) {
+    public int getWidth(Font font) {
         if (isEmpty()) return 0;
         return 164;
     }
