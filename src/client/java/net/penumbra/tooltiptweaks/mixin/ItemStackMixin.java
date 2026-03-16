@@ -10,6 +10,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
+import net.minecraft.world.item.consume_effects.ConsumeEffect;
 import net.penumbra.tooltiptweaks.TooltipTweaks;
 import net.penumbra.tooltiptweaks.config.TooltipTweaksConfig;
 import net.penumbra.tooltiptweaks.config.options.EffectDisplay;
@@ -73,14 +75,31 @@ public abstract class ItemStackMixin {
                     target = "Lnet/minecraft/world/item/Item;appendHoverText(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/Item$TooltipContext;Lnet/minecraft/world/item/component/TooltipDisplay;Ljava/util/function/Consumer;Lnet/minecraft/world/item/TooltipFlag;)V"
             )
     )
-    private void TooltipTweaks$appendAfterHoverText(Item instance, ItemStack stackInstance, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> consumer, TooltipFlag flag, Operation<Void> original) {
-        boolean farmersdelightFood = stackInstance.getCreatorNamespace().equals("farmersdelight") && stackInstance.has(DataComponents.FOOD) && stackInstance.has(DataComponents.CONSUMABLE) && !config.foodEffectDisplay.equals(EffectDisplay.DISABLED);
-
-        if (!farmersdelightFood) {
-            original.call(instance, stackInstance, context, display, consumer, flag);
+    private void TooltipTweaks$appendAfterHoverText(Item instance, ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> consumer, TooltipFlag flag, Operation<Void> original) {
+        if (!TooltipTweaks$shouldHideHoverText(stack)) {
+            original.call(instance, stack, context, display, consumer, flag);
         }
 
         TooltipTweaks.appendAfterHoverText(stack, lines);
+    }
+
+    @Unique
+    private static boolean TooltipTweaks$shouldHideHoverText(ItemStack stack) {
+        if (stack.getCreatorNamespace().equals("farmersdelight") && stack.has(DataComponents.CONSUMABLE)) {
+            List<ConsumeEffect> effects = stack.get(DataComponents.CONSUMABLE).onConsumeEffects();
+
+            if (effects.isEmpty()) {
+                return false;
+            } else {
+                for (ConsumeEffect effect : effects) {
+                    if (effect instanceof ApplyStatusEffectsConsumeEffect) {
+                        return stack.has(DataComponents.FOOD) ? !config.foodEffectDisplay.equals(EffectDisplay.DISABLED) : config.updatePotionTooltips;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     @WrapOperation(
