@@ -8,17 +8,15 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.animal.axolotl.Axolotl;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
-import net.penumbra.tooltiptweaks.config.TooltipTweaksConfig;
 
 import java.util.List;
 import java.util.Optional;
 
-public class AxolotlVariantTooltip {
-
-    private final TooltipTweaksConfig config = TooltipTweaksConfig.getInstance();
+public class AxolotlVariantTooltip implements TooltipProvider {
 
     private static final MapCodec<Axolotl.Variant> AXOLOTL_VARIANT_MAP_CODEC = Axolotl.Variant.CODEC.fieldOf("Variant");
 
+    @Override
     public void register(ItemStack stack, List<Component> lines) {
         if (!config.displayAxolotlVariants) return;
 

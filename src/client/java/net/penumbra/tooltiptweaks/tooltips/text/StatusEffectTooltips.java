@@ -2,7 +2,6 @@ package net.penumbra.tooltiptweaks.tooltips.text;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.component.DataComponentType;
@@ -23,7 +22,6 @@ import net.minecraft.world.item.component.OminousBottleAmplifier;
 import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
 import net.minecraft.world.item.consume_effects.ClearAllStatusEffectsConsumeEffect;
 import net.minecraft.world.item.consume_effects.RemoveStatusEffectsConsumeEffect;
-import net.penumbra.tooltiptweaks.config.TooltipTweaksConfig;
 import net.penumbra.tooltiptweaks.config.options.EffectDisplay;
 import net.penumbra.tooltiptweaks.config.options.OtherEffectDisplay;
 
@@ -33,13 +31,19 @@ import java.util.List;
 import static net.penumbra.tooltiptweaks.TooltipTweaks.creative;
 import static net.penumbra.tooltiptweaks.tooltips.CommonText.*;
 
-public class StatusEffectTooltips {
-
-    private final Minecraft client = Minecraft.getInstance();
-    private final TooltipTweaksConfig config = TooltipTweaksConfig.getInstance();
+public class StatusEffectTooltips implements TooltipProvider {
 
     private List<MobEffectInstance> statusEffects;
     private EffectDisplay style;
+
+    @Override
+    public void register(ItemStack stack, List<Component> lines) {
+        gatherEffects(stack);
+
+        if (EffectDisplay.canDisplay(style) && configAllows(stack)) addAppliedStatusEffects(stack, lines);
+        if (OtherEffectDisplay.canDisplay(config.otherEffectDisplay)) addRemoveEffectTooltips(stack, lines);
+        if (OtherEffectDisplay.canDisplay(config.modifierDisplay)) addModifiers(lines);
+    }
 
     private boolean configAllows(ItemStack stack) {
         if (stack.getItem() instanceof PotionItem || stack.is(Items.OMINOUS_BOTTLE)) return config.updatePotionTooltips;
@@ -113,7 +117,7 @@ public class StatusEffectTooltips {
 
         List<MobEffectInstance> filtered = statusEffects.stream().filter((instance) -> style != EffectDisplay.POSITIVE_EFFECTS_ONLY || creative() || instance.getEffect().value().getCategory() != MobEffectCategory.HARMFUL).toList();
 
-        if (!filtered.isEmpty()) {
+        if (!filtered.isEmpty() && minecraft.level != null) {
             addStatusEffectHeader(lines);
 
             filtered.forEach((instance) -> {
@@ -125,7 +129,7 @@ public class StatusEffectTooltips {
                     text = Component.translatable("potion.withAmplifier", text, Component.translatable("potion.potency." + instance.getAmplifier()));
 
                 if (instance.getDuration() > 20)
-                    text = Component.translatable("potion.withDuration", text, MobEffectUtil.formatDuration(instance, stack.is(Items.LINGERING_POTION) ? 0.25F : 1.0F, client.level.tickRateManager().tickrate()));
+                    text = Component.translatable("potion.withDuration", text, MobEffectUtil.formatDuration(instance, stack.is(Items.LINGERING_POTION) ? 0.25F : 1.0F, minecraft.level.tickRateManager().tickrate()));
 
                 ChatFormatting formatting = switch (category) {
                     case BENEFICIAL -> BENEFICIAL_STATUS_EFFECT_COLOR;
@@ -173,13 +177,5 @@ public class StatusEffectTooltips {
             String modifierKey = modifier.amount() > 0.0 ? "attribute.modifier.plus." : "attribute.modifier.take.";
             lines.add(Component.translatable(modifierKey + modifier.operation().id(), ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(Math.abs(value)), Component.translatable(pair.getFirst().value().getDescriptionId())).withStyle(modifier.amount() > 0.0 ? POSITIVE_MODIFIER_COLOR : NEGATIVE_MODIFIER_COLOR));
         });
-    }
-
-    public void register(ItemStack stack, List<Component> lines) {
-        gatherEffects(stack);
-
-        if (EffectDisplay.canDisplay(style) && configAllows(stack)) addAppliedStatusEffects(stack, lines);
-        if (OtherEffectDisplay.canDisplay(config.otherEffectDisplay)) addRemoveEffectTooltips(stack, lines);
-        if (OtherEffectDisplay.canDisplay(config.modifierDisplay)) addModifiers(lines);
     }
 }

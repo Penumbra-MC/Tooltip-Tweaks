@@ -1,6 +1,5 @@
 package net.penumbra.tooltiptweaks.tooltips.gui;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -12,13 +11,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.MapItem;
 import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
-import net.penumbra.tooltiptweaks.config.TooltipTweaksConfig;
 import net.penumbra.tooltiptweaks.tooltips.AbstractTooltip;
 import org.jetbrains.annotations.Nullable;
 
 public class MapTooltipGUI extends AbstractTooltip {
 
-    private final Minecraft minecraft = Minecraft.getInstance();
     private final MapRenderState mapRenderState = new MapRenderState();
 
     private MapId mapId;
@@ -37,7 +34,7 @@ public class MapTooltipGUI extends AbstractTooltip {
 
     @Override
     public boolean canDisplay(ItemStack stack) {
-        return TooltipTweaksConfig.getInstance().displayMaps && stack.has(DataComponents.MAP_ID);
+        return config.displayMaps && stack.has(DataComponents.MAP_ID);
     }
 
     @Override

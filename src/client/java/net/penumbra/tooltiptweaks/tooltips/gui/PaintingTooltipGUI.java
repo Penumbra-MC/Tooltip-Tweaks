@@ -1,6 +1,5 @@
 package net.penumbra.tooltiptweaks.tooltips.gui;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -9,15 +8,12 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.decoration.painting.PaintingVariant;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.penumbra.tooltiptweaks.config.TooltipTweaksConfig;
 import net.penumbra.tooltiptweaks.tooltips.AbstractTooltip;
 
 import static net.minecraft.core.component.DataComponents.PAINTING_VARIANT;
 
 public class PaintingTooltipGUI extends AbstractTooltip {
 
-    private final Minecraft minecraft = Minecraft.getInstance();
-    private final TooltipTweaksConfig config = TooltipTweaksConfig.getInstance();
     private PaintingVariant variant;
 
     @Override

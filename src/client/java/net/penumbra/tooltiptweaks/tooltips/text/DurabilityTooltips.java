@@ -1,38 +1,16 @@
 package net.penumbra.tooltiptweaks.tooltips.text;
 
 import com.ibm.icu.text.DecimalFormat;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
-import net.penumbra.tooltiptweaks.config.TooltipTweaksConfig;
 
 import java.util.List;
 
-public class DurabilityTooltips {
+public class DurabilityTooltips implements TooltipProvider {
 
-    private final Minecraft client = Minecraft.getInstance();
-    private final TooltipTweaksConfig config = TooltipTweaksConfig.getInstance();
-
-    private DecimalFormat getDurabilityDecimalFormat() {
-        StringBuilder string = new StringBuilder("#");
-
-        for (int i = 0; i < config.percentageDigits; i++) {
-            if (i == 0) {
-                string.append(".");
-            }
-            string.append("#");
-        }
-
-        return new DecimalFormat(string.toString());
-    }
-
-    private int getDurabilityTextColor(float max, float damage) {
-        float f = Math.max(0, (max - damage) / max);
-        return Mth.hsvToRgb(f / 3, 1, 1);
-    }
-
+    @Override
     public void register(ItemStack stack, List<Component> lines) {
         if (!stack.isDamageableItem() || !stack.isDamaged()) return;
 
@@ -60,5 +38,23 @@ public class DurabilityTooltips {
             message = Component.translatable("tooltiptweaks.ui.uses_left", new DecimalFormat("#").format(durability));
             lines.add(message.setStyle(message.getStyle().withColor(getDurabilityTextColor(max, damage))));
         }
+    }
+
+    private DecimalFormat getDurabilityDecimalFormat() {
+        StringBuilder string = new StringBuilder("#");
+
+        for (int i = 0; i < config.percentageDigits; i++) {
+            if (i == 0) {
+                string.append(".");
+            }
+            string.append("#");
+        }
+
+        return new DecimalFormat(string.toString());
+    }
+
+    private int getDurabilityTextColor(float max, float damage) {
+        float f = Math.max(0, (max - damage) / max);
+        return Mth.hsvToRgb(f / 3, 1, 1);
     }
 }

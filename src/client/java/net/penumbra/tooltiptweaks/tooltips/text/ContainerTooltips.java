@@ -1,28 +1,35 @@
 package net.penumbra.tooltiptweaks.tooltips.text;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
-import net.penumbra.tooltiptweaks.config.TooltipTweaksConfig;
 import net.penumbra.tooltiptweaks.config.options.ContainerStyle;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
-public class ContainerTooltips {
+public class ContainerTooltips implements TooltipProvider {
 
     private static final Component UNKNOWN_CONTENTS_TEXT = Component.translatable("container.shulkerBox.unknownContents");
-
-    private final NonNullList<ItemStack> INVENTORY = NonNullList.withSize(27, ItemStack.EMPTY);
     private final LinkedHashMap<Item, Integer> ITEM_COUNT_MAP = new LinkedHashMap<>();
 
-    private final Minecraft client = Minecraft.getInstance();
-    private final TooltipTweaksConfig config = TooltipTweaksConfig.getInstance();
+    @Override
+    public void register(ItemStack stack, List<Component> lines) {
+        if (stack.has(DataComponents.CONTAINER_LOOT)) {
+            lines.add(UNKNOWN_CONTENTS_TEXT);
+        }
+
+        var display = config.containerStyle;
+        if (stack.has(DataComponents.CONTAINER)) {
+            if (display == ContainerStyle.LIST_PER_ITEM) addPerItemTooltips(stack, lines);
+            if (display == ContainerStyle.LIST_PER_STACK) addPerStackTooltips(stack, lines);
+        }
+    }
 
     private void addPerItemTooltips(ItemStack stack, List<Component> lines) {
 
@@ -37,13 +44,13 @@ public class ContainerTooltips {
         }
 
         int maxrenderedLines = config.containerEntries;
-        var renderedLines = 0;
-        var moreItems = 0;
+        int renderedLines = 0;
+        int moreItems = 0;
 
         // Go through the HashMap and render lines based on the item and count data
-        for (var set : ITEM_COUNT_MAP.entrySet()) {
-            var name = set.getKey().getName().plainCopy();
-            var count = set.getValue();
+        for (Map.Entry<Item, Integer> set : ITEM_COUNT_MAP.entrySet()) {
+            MutableComponent name = set.getKey().getName().plainCopy();
+            Integer count = set.getValue();
 
             if (renderedLines < maxrenderedLines) {
                 lines.add(name.withStyle(ChatFormatting.GRAY).append(Component.translatable("tooltiptweaks.ui.container.entry", count).withStyle(ChatFormatting.WHITE)));
@@ -61,12 +68,12 @@ public class ContainerTooltips {
     private void addPerStackTooltips(ItemStack stack, List<Component> lines) {
 
         int maxrenderedLines = config.containerEntries;
-        var renderedLines = 0;
-        var moreItems = 0;
+        int renderedLines = 0;
+        int moreItems = 0;
 
         for (ItemStack itemStack : stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).nonEmptyItems()) {
-            var name = itemStack.getHoverName().plainCopy();
-            var count = itemStack.getCount();
+            MutableComponent name = itemStack.getHoverName().plainCopy();
+            int count = itemStack.getCount();
 
             if (renderedLines < maxrenderedLines) {
                 lines.add(name.withStyle(ChatFormatting.GRAY).append(Component.translatable("tooltiptweaks.ui.container.entry", count).withStyle(ChatFormatting.WHITE)));
@@ -78,18 +85,6 @@ public class ContainerTooltips {
 
         if (renderedLines >= maxrenderedLines && moreItems > 0) {
             lines.add(Component.translatable("tooltiptweaks.ui.container.more", moreItems).withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
-        }
-    }
-
-    public void register(ItemStack stack, List<Component> lines) {
-        if (stack.has(DataComponents.CONTAINER_LOOT)) {
-            lines.add(UNKNOWN_CONTENTS_TEXT);
-        }
-
-        var display = config.containerStyle;
-        if (stack.has(DataComponents.CONTAINER)) {
-            if (display == ContainerStyle.LIST_PER_ITEM) addPerItemTooltips(stack, lines);
-            if (display == ContainerStyle.LIST_PER_STACK) addPerStackTooltips(stack, lines);
         }
     }
 }

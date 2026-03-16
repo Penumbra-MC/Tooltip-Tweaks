@@ -7,13 +7,13 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.penumbra.tooltiptweaks.TooltipTweaks;
-import net.penumbra.tooltiptweaks.config.TooltipTweaksConfig;
 import net.penumbra.tooltiptweaks.config.options.ContainerStyle;
 import net.penumbra.tooltiptweaks.tooltips.AbstractTooltip;
 
 import java.util.List;
 
 public class ContainerTooltipGUI extends AbstractTooltip {
+
     private ItemContainerContents component;
 
     @Override
@@ -24,7 +24,7 @@ public class ContainerTooltipGUI extends AbstractTooltip {
 
     @Override
     public boolean canDisplay(ItemStack stack) {
-        return stack.getComponents().has(DataComponents.CONTAINER) && TooltipTweaksConfig.getInstance().containerStyle == ContainerStyle.INVENTORY;
+        return stack.getComponents().has(DataComponents.CONTAINER) && config.containerStyle == ContainerStyle.INVENTORY;
     }
 
     private boolean isEmpty() {

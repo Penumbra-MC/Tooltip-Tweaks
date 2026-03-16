@@ -1,7 +1,6 @@
 package net.penumbra.tooltiptweaks.tooltips.text;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -18,16 +17,13 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.LodestoneTracker;
 import net.minecraft.world.level.Level;
 import net.penumbra.tooltiptweaks.TooltipTweaks;
-import net.penumbra.tooltiptweaks.config.TooltipTweaksConfig;
 
 import java.util.List;
 import java.util.Optional;
 
-public class CompassTooltips {
+public class CompassTooltips implements TooltipProvider {
 
-    private final Minecraft minecraft = Minecraft.getInstance();
-    private final TooltipTweaksConfig config = TooltipTweaksConfig.getInstance();
-
+    @Override
     public void register(ItemStack stack, List<Component> lines) {
         ClientLevel level = minecraft.level;
         LocalPlayer player = minecraft.player;
@@ -98,15 +94,15 @@ public class CompassTooltips {
         });
     }
 
-    private static boolean isSameDimension(LocalPlayer player, ResourceKey<Level> dimension) {
+    private boolean isSameDimension(LocalPlayer player, ResourceKey<Level> dimension) {
         return player.level().dimension().equals(dimension);
     }
 
-    private static MutableComponent tooltip(String name, Object... objects) {
+    private MutableComponent tooltip(String name, Object... objects) {
         return Component.translatable("item." + TooltipTweaks.MOD_ID + ".location." + name, objects);
     }
 
-    private static int distanceBetweenPoints(BlockPos pos, BlockPos pos2) {
+    private int distanceBetweenPoints(BlockPos pos, BlockPos pos2) {
         float x = pos.getX() - pos2.getX();
         float z = pos.getZ() - pos2.getZ();
         return (int) Mth.sqrt(x * x + z * z);

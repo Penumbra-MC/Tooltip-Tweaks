@@ -6,8 +6,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.penumbra.tooltiptweaks.TooltipTweaks;
 import net.penumbra.tooltiptweaks.config.TooltipTweaksConfig;
-import net.penumbra.tooltiptweaks.tooltips.text.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -57,19 +57,8 @@ public abstract class ItemStackMixin {
             )
     )
     private void TooltipTweaks$addLines(Item.TooltipContext context, Player player, TooltipFlag type, CallbackInfoReturnable<List<Component>> info) {
+        TooltipTweaks.addTooltips(stack, lines);
+
         if (config.updateEnchantmentTooltips && isEnchanted()) lines.add(CommonComponents.EMPTY);
-
-        new DurabilityTooltips().register(stack, lines);
-        new RepairCostTooltip().register(stack, lines);
-
-        new NutritionTooltips().register(stack, lines);
-        new StatusEffectTooltips().register(stack, lines);
-
-        new AxolotlVariantTooltip().register(stack, lines);
-        new ClockTooltips().register(stack, lines);
-        new CompassTooltips().register(stack, lines);
-        new ContainerTooltips().register(stack, lines);
-
-        new InstrumentTooltip().register(stack, lines);
     }
 }

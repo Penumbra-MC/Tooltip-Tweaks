@@ -9,7 +9,6 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.penumbra.tooltiptweaks.TooltipTweaks;
-import net.penumbra.tooltiptweaks.config.TooltipTweaksConfig;
 import net.penumbra.tooltiptweaks.config.options.IconLocation;
 import net.penumbra.tooltiptweaks.config.options.NourishmentDisplay;
 import net.penumbra.tooltiptweaks.config.options.NourishmentStyle;
@@ -19,8 +18,6 @@ public class FoodTooltipGUI extends AbstractTooltip {
 
     private ItemStack stack;
     private FoodProperties component;
-
-    private final TooltipTweaksConfig config = TooltipTweaksConfig.getInstance();
 
     private static final Identifier FOOD_HALF_TEXTURE = Identifier.withDefaultNamespace("hud/food_half");
     private static final Identifier FOOD_FULL_TEXTURE = Identifier.withDefaultNamespace("hud/food_full");
