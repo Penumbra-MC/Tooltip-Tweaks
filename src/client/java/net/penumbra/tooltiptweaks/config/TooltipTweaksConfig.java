@@ -12,6 +12,10 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.penumbra.tooltiptweaks.config.options.*;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static net.penumbra.tooltiptweaks.TooltipTweaks.id;
 
@@ -34,17 +38,20 @@ public class TooltipTweaksConfig {
     @SerialEntry public boolean displayMaps = true;
     @SerialEntry public boolean displayMoonPhase = false;
     @SerialEntry public boolean displayPaintings = true;
-    @SerialEntry public boolean displaySpawnEgg = false;
     @SerialEntry public boolean displayUsesLeft = false;
     @SerialEntry public boolean updateEnchantmentTooltips = true;
     @SerialEntry public boolean updatePotionTooltips = true;
     @SerialEntry public boolean updateTippedArrowTooltips = true;
 
+    @SerialEntry public boolean displayCompassCoordinates = false;
+    @SerialEntry public boolean displayCompassDistance = true;
+    @SerialEntry public boolean displayCompassDimension = false;
+    @SerialEntry public boolean displayCompassInfoOnShift = false;
+
     @SerialEntry public int containerEntries = 6;
     @SerialEntry public int percentageDigits = 0;
 
     @SerialEntry public ClockTimeDisplay clockTimeDisplay = ClockTimeDisplay.TWELVE_HOUR;
-    @SerialEntry public CompassDisplay compassDisplay = CompassDisplay.DISTANCE;
     @SerialEntry public ContainerStyle containerStyle = ContainerStyle.LIST_PER_ITEM;
     @SerialEntry public CrossbowDisplay updateCrossbowTooltips = CrossbowDisplay.WHITE_ITEM_TEXT;
     @SerialEntry public DurabilityStyle durabilityStyle = DurabilityStyle.PERCENTAGE;
@@ -60,126 +67,117 @@ public class TooltipTweaksConfig {
 
     private static ConfigCategory toolsCategory(TooltipTweaksConfig config) {
 
-        Option<?> CLOCK_DISPLAY_TIME = Option.<ClockTimeDisplay>createBuilder()
+        Option<?> clockDisplayTime = Option.<ClockTimeDisplay>createBuilder()
                 .name(Component.translatable("tooltiptweaks.option.clock_time_display"))
                 .description(OptionDescription.createBuilder().text(Component.translatable("tooltiptweaks.option.clock_time_display.desc")).webpImage(id("textures/gui/previews/time_display.webp")).build())
                 .binding(ClockTimeDisplay.TWELVE_HOUR, () -> config.clockTimeDisplay, value -> config.clockTimeDisplay = value)
                 .controller(opt -> EnumControllerBuilder.create(opt).enumClass(ClockTimeDisplay.class))
                 .build();
 
-        Option<?> CLOCK_DISPLAY_DAY_NUMBER = Option.<Boolean>createBuilder()
+        Option<?> clockDisplayDayNumber = Option.<Boolean>createBuilder()
                 .name(Component.translatable("tooltiptweaks.option.day_number"))
                 .description(OptionDescription.createBuilder().text(Component.translatable("tooltiptweaks.option.day_number.desc")).webpImage(id("textures/gui/previews/day_number.webp")).build())
                 .binding(false, () -> config.displayDayNumber, value -> config.displayDayNumber = value)
                 .controller(TickBoxControllerBuilder::create)
                 .build();
 
-        Option<?> CLOCK_DISPLAY_MOON_PHASE = Option.<Boolean>createBuilder()
+        Option<?> clockDisplayMoonPhase = Option.<Boolean>createBuilder()
                 .name(Component.translatable("tooltiptweaks.option.moon_phase"))
                 .description(OptionDescription.createBuilder().text(Component.translatable("tooltiptweaks.option.moon_phase.desc")).webpImage(id("textures/gui/previews/moon_phase.webp")).build())
                 .binding(false, () -> config.displayMoonPhase, value -> config.displayMoonPhase = value)
                 .controller(TickBoxControllerBuilder::create)
                 .build();
 
-        Option<?> CONTAINER_DISPLAY_STYLE = Option.<ContainerStyle>createBuilder()
+        Option<?> containerDisplayStyle = Option.<ContainerStyle>createBuilder()
                 .name(Component.translatable("tooltiptweaks.option.container_display_style"))
                 .description(OptionDescription.createBuilder().text(Component.translatable("tooltiptweaks.option.container_display_style.desc")).webpImage(id("textures/gui/previews/container_display_style.webp")).build())
                 .binding(ContainerStyle.LIST_PER_ITEM, () -> config.containerStyle, value -> config.containerStyle = value)
                 .controller(opt -> EnumControllerBuilder.create(opt).enumClass(ContainerStyle.class))
                 .build();
 
-        Option<?> CONTAINER_MAXIMUM_LIST_LENGTH = Option.<Integer>createBuilder()
+        Option<?> containerMaximumListLength = Option.<Integer>createBuilder()
                 .name(Component.translatable("tooltiptweaks.option.container_entries"))
                 .description(OptionDescription.createBuilder().text(Component.translatable("tooltiptweaks.option.container_entries.desc")).webpImage(id("textures/gui/previews/container_entries.webp")).build())
                 .binding(6, () -> config.containerEntries, value -> config.containerEntries = value)
                 .controller(opt -> IntegerSliderControllerBuilder.create(opt).range(1, 27).step(1))
                 .build();
 
-        Option<?> DISPLAY_MAPS = Option.<Boolean>createBuilder()
+        Option<?> displayMaps = Option.<Boolean>createBuilder()
                 .name(Component.translatable("tooltiptweaks.option.display_maps"))
                 .description(OptionDescription.createBuilder().text(Component.translatable("tooltiptweaks.option.display_maps.desc")).webpImage(id("textures/gui/previews/display_maps.webp")).build())
                 .binding(true, () -> config.displayMaps, value -> config.displayMaps = value)
                 .controller(TickBoxControllerBuilder::create)
                 .build();
 
-        Option<?> DURABILITY_DISPLAY_STYLE = Option.<DurabilityStyle>createBuilder()
+        Option<?> durabilityDisplayStyle = Option.<DurabilityStyle>createBuilder()
                 .name(Component.translatable("tooltiptweaks.option.durability_display_style"))
                 .binding(DurabilityStyle.PERCENTAGE, () -> config.durabilityStyle, value -> config.durabilityStyle = value)
                 .description(OptionDescription.createBuilder().text(Component.translatable("tooltiptweaks.option.durability_display_style.desc")).webpImage(id("textures/gui/previews/durability_display_style.webp")).build())
                 .controller(opt -> EnumControllerBuilder.create(opt).enumClass(DurabilityStyle.class))
                 .build();
 
-        Option<?> DURABILITY_DIGIT_COUNT = Option.<Integer>createBuilder()
+        Option<?> durabilityDigitCount = Option.<Integer>createBuilder()
                 .name(Component.translatable("tooltiptweaks.option.percentage_digits"))
                 .binding(0, () -> config.percentageDigits, value -> config.percentageDigits = value)
                 .description(OptionDescription.createBuilder().text(Component.translatable("tooltiptweaks.option.percentage_digits.desc")).webpImage(id("textures/gui/previews/percentage_digits.webp")).build())
                 .controller(opt -> IntegerSliderControllerBuilder.create(opt).range(0, 4).step(1))
                 .build();
 
-        Option<?> DURABILITY_DISPLAY_USES_LEFT = Option.<Boolean>createBuilder()
+        Option<?> durabilityDisplayUsesLeft = Option.<Boolean>createBuilder()
                 .name(Component.translatable("tooltiptweaks.option.display_uses_left"))
                 .binding(false, () -> config.displayUsesLeft, value -> config.displayUsesLeft = value)
                 .description(OptionDescription.createBuilder().text(Component.translatable("tooltiptweaks.option.display_uses_left.desc")).webpImage(id("textures/gui/previews/display_uses_left.webp")).build())
                 .controller(TickBoxControllerBuilder::create)
                 .build();
 
-        Option<?> COMPASS_DISPLAY_LOCATION = Option.<CompassDisplay>createBuilder()
-                .name(Component.translatable("tooltiptweaks.option.compass_display"))
-                .binding(CompassDisplay.DISTANCE, () -> config.compassDisplay, value -> config.compassDisplay = value)
-                .description(OptionDescription.createBuilder().text(Component.translatable("tooltiptweaks.option.compass_display.desc")).webpImage(id("textures/gui/previews/compass_display.webp")).build())
-                .controller(opt -> EnumControllerBuilder.create(opt).enumClass(CompassDisplay.class))
-                .build();
+        Option<?> displayCompassCoordinates = createBool("display_compass_coordinates", false, () -> config.displayCompassCoordinates, value -> config.displayCompassCoordinates = value);
+        Option<?> displayCompassDistance = createBool("display_compass_distance", true, () -> config.displayCompassDistance, value -> config.displayCompassDistance = value);
+        Option<?> displayCompassDimension = createBool("display_compass_dimension", false, () -> config.displayCompassDimension, value -> config.displayCompassDimension = value);
+        Option<?> displayCompassInfoOnShift = createBool("display_compass_info_on_shift", false, () -> config.displayCompassInfoOnShift, value -> config.displayCompassInfoOnShift = value);
 
-        Option<?> DISPLAY_AXOLOTL_VARIANTS = Option.<Boolean>createBuilder()
+        Option<?> displayAxolotlVariants = Option.<Boolean>createBuilder()
                 .name(Component.translatable("tooltiptweaks.option.display_axolotl_variants"))
                 .binding(true, () -> config.displayAxolotlVariants, value -> config.displayAxolotlVariants = value)
                 .description(OptionDescription.createBuilder().text(Component.translatable("tooltiptweaks.option.display_axolotl_variants.desc")).webpImage(id("textures/gui/previews/display_axolotl_variants.webp")).build())
                 .controller(TickBoxControllerBuilder::create)
                 .build();
 
-        Option<?> DISPLAY_INSTRUMENT_TYPE = Option.<InstrumentDisplay>createBuilder()
+        Option<?> displayInstrumentType = Option.<InstrumentDisplay>createBuilder()
                 .name(Component.translatable("tooltiptweaks.option.display_instrument"))
                 .binding(InstrumentDisplay.WHILE_CARRYING_NOTE_BLOCKS, () -> config.instrumentDisplay, value -> config.instrumentDisplay = value)
                 .description(OptionDescription.createBuilder().text(Component.translatable("tooltiptweaks.option.display_instrument.desc")).webpImage(id("textures/gui/previews/display_instrument.webp")).build())
                 .controller(opt -> EnumControllerBuilder.create(opt).enumClass(InstrumentDisplay.class))
                 .build();
 
-        Option<?> DISPLAY_PAINTINGS = Option.<Boolean>createBuilder()
+        Option<?> displayPaintings = Option.<Boolean>createBuilder()
                 .name(Component.translatable("tooltiptweaks.option.display_paintings"))
                 .binding(true, () -> config.displayPaintings, value -> config.displayPaintings = value)
                 .description(OptionDescription.createBuilder().text(Component.translatable("tooltiptweaks.option.display_paintings.desc")).webpImage(id("textures/gui/previews/display_paintings.webp")).build())
                 .controller(TickBoxControllerBuilder::create)
                 .build();
 
-        Option<?> DISPLAY_REPAIR_COST = Option.<RepairCostDisplay>createBuilder()
+        Option<?> displayRepairCost = Option.<RepairCostDisplay>createBuilder()
                 .name(Component.translatable("tooltiptweaks.option.display_repair_cost"))
                 .binding(RepairCostDisplay.ON_RELEVANT_MENUS, () -> config.repairCostDisplay, value -> config.repairCostDisplay = value)
                 .description(OptionDescription.createBuilder().text(Component.translatable("tooltiptweaks.option.display_repair_cost.desc")).webpImage(id("textures/gui/previews/display_repair_cost.webp")).build())
                 .controller(opt -> EnumControllerBuilder.create(opt).enumClass(RepairCostDisplay.class))
                 .build();
 
-        Option<?> DISPLAY_SPAWN_EGG = Option.<Boolean>createBuilder()
-                .name(Component.translatable("tooltiptweaks.option.display_spawn_egg"))
-                .binding(false, () -> config.displaySpawnEgg, value -> config.displaySpawnEgg = value)
-                .description(OptionDescription.createBuilder().text(Component.translatable("tooltiptweaks.option.display_spawn_egg.desc")).webpImage(id("textures/gui/previews/display_spawn_egg.webp")).build())
-                .controller(TickBoxControllerBuilder::create)
-                .build();
-
-        Option<?> UPDATE_CROSSBOW_TOOLTIPS = Option.<CrossbowDisplay>createBuilder()
+        Option<?> updateCrossbowTooltips = Option.<CrossbowDisplay>createBuilder()
                 .name(Component.translatable("tooltiptweaks.option.update_crossbow_tooltips"))
                 .binding(CrossbowDisplay.WHITE_ITEM_TEXT, () -> config.updateCrossbowTooltips, value -> config.updateCrossbowTooltips = value)
                 .description(OptionDescription.createBuilder().text(Component.translatable("tooltiptweaks.option.update_crossbow_tooltips.desc")).webpImage(id("textures/gui/previews/update_crossbow_tooltips.webp")).build())
                 .controller(opt -> EnumControllerBuilder.create(opt).enumClass(CrossbowDisplay.class))
                 .build();
 
-        Option<?> UPDATE_ENCHANTMENT_TOOLTIPS = Option.<Boolean>createBuilder()
+        Option<?> updateEnchantmentTooltips = Option.<Boolean>createBuilder()
                 .name(Component.translatable("tooltiptweaks.option.update_enchantment_tooltips"))
                 .binding(true, () -> config.updateEnchantmentTooltips, value -> config.updateEnchantmentTooltips = value)
                 .description(OptionDescription.createBuilder().text(Component.translatable("tooltiptweaks.option.update_enchantment_tooltips.desc")).webpImage(id("textures/gui/previews/update_enchantment_tooltips.webp")).build())
                 .controller(TickBoxControllerBuilder::create)
                 .build();
 
-        Option<?> UPDATE_TIPPED_ARROW_TOOLTIPS = Option.<Boolean>createBuilder()
+        Option<?> updateTippedArrowTooltips = Option.<Boolean>createBuilder()
                 .name(Component.translatable("tooltiptweaks.option.update_tipped_arrow_tooltips"))
                 .binding(true, () -> config.updateTippedArrowTooltips, value -> config.updateTippedArrowTooltips = value)
                 .description(OptionDescription.createBuilder().text(Component.translatable("tooltiptweaks.option.update_tipped_arrow_tooltips.desc")).webpImage(id("textures/gui/previews/update_tipped_arrow_tooltips.webp")).build())
@@ -192,36 +190,38 @@ public class TooltipTweaksConfig {
                 .group(OptionGroup.createBuilder()
                         .name(Component.translatable("tooltiptweaks.group.tools"))
 
-                        .option(DURABILITY_DISPLAY_STYLE)
-                        .option(DURABILITY_DIGIT_COUNT)
-                        .option(DURABILITY_DISPLAY_USES_LEFT)
-                        .option(DISPLAY_REPAIR_COST)
-                        .option(UPDATE_CROSSBOW_TOOLTIPS)
-                        .option(UPDATE_ENCHANTMENT_TOOLTIPS)
-                        .option(UPDATE_TIPPED_ARROW_TOOLTIPS)
+                        .option(durabilityDisplayStyle)
+                        .option(durabilityDigitCount)
+                        .option(durabilityDisplayUsesLeft)
+                        .option(displayRepairCost)
+                        .option(updateCrossbowTooltips)
+                        .option(updateEnchantmentTooltips)
+                        .option(updateTippedArrowTooltips)
 
                         .build())
 
                 .group(OptionGroup.createBuilder()
                         .name(Component.translatable("tooltiptweaks.group.informational_tools"))
 
-                        .option(CLOCK_DISPLAY_TIME)
-                        .option(CLOCK_DISPLAY_DAY_NUMBER)
-                        .option(CLOCK_DISPLAY_MOON_PHASE)
-                        .option(COMPASS_DISPLAY_LOCATION)
-                        .option(CONTAINER_DISPLAY_STYLE)
-                        .option(CONTAINER_MAXIMUM_LIST_LENGTH)
-                        .option(DISPLAY_MAPS)
+                        .option(clockDisplayTime)
+                        .option(clockDisplayDayNumber)
+                        .option(clockDisplayMoonPhase)
+                        .option(displayCompassCoordinates)
+                        .option(displayCompassDistance)
+                        .option(displayCompassDimension)
+                        .option(displayCompassInfoOnShift)
+                        .option(containerDisplayStyle)
+                        .option(containerMaximumListLength)
+                        .option(displayMaps)
 
                         .build())
 
                 .group(OptionGroup.createBuilder()
                         .name(Component.translatable("tooltiptweaks.group.other_items"))
 
-                        .option(DISPLAY_AXOLOTL_VARIANTS)
-                        .option(DISPLAY_SPAWN_EGG)
-                        .option(DISPLAY_INSTRUMENT_TYPE)
-                        .option(DISPLAY_PAINTINGS)
+                        .option(displayAxolotlVariants)
+                        .option(displayInstrumentType)
+                        .option(displayPaintings)
 
                         .build())
                 .build();
@@ -320,5 +320,14 @@ public class TooltipTweaksConfig {
 
     static {
         HANDLER.load();
+    }
+
+    private static Option<Boolean> createBool(String name, boolean defaultValue, @NotNull Supplier<Boolean> getter, @NotNull Consumer<Boolean> setter) {
+        return Option.<Boolean>createBuilder()
+                .name(Component.translatable("tooltiptweaks.option." + name))
+                .binding(defaultValue, getter, setter)
+                .description(OptionDescription.createBuilder().text(Component.translatable("tooltiptweaks.option.display_axolotl_variants.desc")).webpImage(id("textures/gui/previews/" + name + ".webp")).build())
+                .controller(TickBoxControllerBuilder::create)
+                .build();
     }
 }
