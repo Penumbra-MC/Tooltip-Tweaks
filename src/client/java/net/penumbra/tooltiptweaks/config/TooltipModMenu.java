@@ -71,12 +71,21 @@ public class TooltipModMenu implements ModMenuApi {
                 .controller(TickBoxControllerBuilder::create)
                 .build();
 
-        Option<?> durabilityDisplayStyle = Option.<DurabilityStyle>createBuilder()
-                .name(Component.translatable("tooltiptweaks.option.durability_display_style"))
-                .binding(DurabilityStyle.PERCENTAGE, () -> config.durabilityStyle, value -> config.durabilityStyle = value)
-                .description(OptionDescription.createBuilder().text(Component.translatable("tooltiptweaks.option.durability_display_style.desc")).webpImage(id("textures/gui/previews/durability_display_style.webp")).build())
-                .controller(opt -> EnumControllerBuilder.create(opt).enumClass(DurabilityStyle.class))
-                .build();
+        Option<?> durabilityDisplayStyle = create(
+                "durability_display_style",
+                DurabilityStyle.PERCENTAGE,
+                () -> config.durabilityStyle,
+                value -> config.durabilityStyle = value,
+                option -> EnumControllerBuilder.create(option).enumClass(DurabilityStyle.class)
+        );
+
+        Option<?> durabilityTextColor = create(
+                "durability_text_color",
+                DurabilityTextColor.MULTICOLOR,
+                () -> config.durabilityTextColor,
+                value -> config.durabilityTextColor = value,
+                option -> EnumControllerBuilder.create(option).enumClass(DurabilityTextColor.class)
+        );
 
         Option<?> durabilityDigitCount = Option.<Integer>createBuilder()
                 .name(Component.translatable("tooltiptweaks.option.percentage_digits"))
@@ -153,6 +162,7 @@ public class TooltipModMenu implements ModMenuApi {
                         .name(Component.translatable("tooltiptweaks.group.tools"))
 
                         .option(durabilityDisplayStyle)
+                        .option(durabilityTextColor)
                         .option(durabilityDigitCount)
                         .option(durabilityDisplayUsesLeft)
                         .option(displayRepairCost)
