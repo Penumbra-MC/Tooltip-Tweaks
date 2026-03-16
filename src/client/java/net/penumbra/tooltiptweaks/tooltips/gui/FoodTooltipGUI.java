@@ -8,7 +8,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.MobBucketItem;
 import net.penumbra.tooltiptweaks.TooltipTweaks;
 import net.penumbra.tooltiptweaks.config.options.IconLocation;
 import net.penumbra.tooltiptweaks.config.options.NourishmentDisplay;
@@ -37,9 +36,7 @@ public class FoodTooltipGUI extends AbstractTooltip {
     public boolean canDisplay(ItemStack stack) {
         if (config.nourishmentStyle != NourishmentStyle.ICONS) return false;
         if (config.nourishmentDisplay == NourishmentDisplay.DISABLED) return false;
-        if (stack.is(Items.OMINOUS_BOTTLE)) return false;
-        if (stack.getItem() instanceof MobBucketItem) return false;
-        return stack.getComponents().has(DataComponents.FOOD) || stack.is(Items.CAKE);
+        return (stack.has(DataComponents.FOOD) && stack.has(DataComponents.CONSUMABLE)) || stack.is(Items.CAKE);
     }
 
     @Override
