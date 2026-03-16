@@ -1,13 +1,17 @@
 package net.penumbra.tooltiptweaks.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.penumbra.tooltiptweaks.TooltipTweaks;
 import net.penumbra.tooltiptweaks.config.TooltipTweaksConfig;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -54,9 +58,33 @@ public abstract class ItemStackMixin {
                     shift = At.Shift.AFTER
             )
     )
-    private void TooltipTweaks$addLines(Item.TooltipContext context, Player player, TooltipFlag type, CallbackInfoReturnable<List<Component>> info) {
-        TooltipTweaks.addTooltips(stack, lines);
+    private void TooltipTweaks$appendBeforeHoverText(Item.TooltipContext context, Player player, TooltipFlag type, CallbackInfoReturnable<List<Component>> info) {
+        TooltipTweaks.appendBeforeHoverText(stack, lines);
 
         if (config.updateEnchantmentTooltips && isEnchanted()) lines.add(CommonComponents.EMPTY);
+    }
+
+    @WrapOperation(
+            method = "addDetailsToTooltip",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/item/Item;appendHoverText(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/Item$TooltipContext;Lnet/minecraft/world/item/component/TooltipDisplay;Ljava/util/function/Consumer;Lnet/minecraft/world/item/TooltipFlag;)V"
+            )
+    )
+    private void TooltipTweaks$appendAfterHoverText(Item instance, ItemStack stackInstance, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> consumer, TooltipFlag flag, Operation<Void> original) {
+        original.call(instance, stackInstance, context, display, consumer, flag);
+        TooltipTweaks.appendAfterHoverText(stack, lines);
+    }
+
+    @WrapOperation(
+            method = "getTooltipLines",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/item/ItemStack;addDetailsToTooltip(Lnet/minecraft/world/item/Item$TooltipContext;Lnet/minecraft/world/item/component/TooltipDisplay;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/TooltipFlag;Ljava/util/function/Consumer;)V"
+            )
+    )
+    private void TooltipTweaks$appendAfterDetails(ItemStack instance, Item.TooltipContext context, TooltipDisplay display, @Nullable Player player, TooltipFlag flag, Consumer<Component> consumer, Operation<Void> original) {
+        original.call(instance, context, display, player, flag, consumer);
+        TooltipTweaks.appendAfterDetails(stack, lines);
     }
 }

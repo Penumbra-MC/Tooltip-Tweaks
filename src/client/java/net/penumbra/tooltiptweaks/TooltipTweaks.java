@@ -30,10 +30,12 @@ public class TooltipTweaks implements ClientModInitializer {
         return player.getAbilities().instabuild;
     }
 
-    public static void addTooltips(ItemStack stack, List<Component> lines) {
+    public static void appendBeforeHoverText(ItemStack stack, List<Component> lines) {
         new DurabilityTooltips().register(stack, lines);
         new RepairCostTooltip().register(stack, lines);
+    }
 
+    public static void appendAfterHoverText(ItemStack stack, List<Component> lines) {
         new NutritionTooltips().register(stack, lines);
         new StatusEffectTooltips().register(stack, lines);
 
@@ -41,7 +43,9 @@ public class TooltipTweaks implements ClientModInitializer {
         new ClockTooltips().register(stack, lines);
         new CompassTooltips().register(stack, lines);
         new ContainerTooltips().register(stack, lines);
+    }
 
+    public static void appendAfterDetails(ItemStack stack, List<Component> lines) {
         new InstrumentTooltip().register(stack, lines);
     }
 
