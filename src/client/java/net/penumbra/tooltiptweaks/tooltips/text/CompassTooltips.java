@@ -37,7 +37,7 @@ public class CompassTooltips {
 
         Optional<GlobalPos> target = Optional.empty();
 
-        if (stack.has(DataComponents.LODESTONE_TRACKER)) {
+        if (stack.has(DataComponents.LODESTONE_TRACKER) && !stack.getCreatorNamespace().equals("enderscape")) {
             LodestoneTracker component = stack.get(DataComponents.LODESTONE_TRACKER);
             if (component != null) target = component.target();
         } else {
