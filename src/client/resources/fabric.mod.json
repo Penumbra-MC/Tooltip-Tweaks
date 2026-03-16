@@ -3,19 +3,19 @@
     "id": "tooltiptweaks",
     "version": "${version}",
     "name": "Tooltip Tweaks",
-    "description": "Expanding and revamping Minecraft's tooltips",
+    "description": "Modest expansion to tooltips, including additional information for tools, food, and other items.",
     "authors": [
         "lunarbunten"
     ],
     "contact": {
+        "homepage": "https://modrinth.com/mod/tooltiptweaks",
         "sources": "https://github.com/Penumbra-MC/Tooltip-Tweaks",
         "issues": "https://github.com/Penumbra-MC/Tooltip-Tweaks/issues"
     },
     "custom": {
         "modmenu": {
             "links": {
-                "tooltiptweaks.modrinth": "https://modrinth.com/mod/tooltiptweaks",
-                "tooltiptweaks.curseforge": "https://www.curseforge.com/minecraft/mc-mods/tooltiptweaks"
+                "tooltiptweaks.external_link.discord": "https://discord.gg/bksj9aqqgb"
             }
         }
     },
@@ -24,14 +24,17 @@
     "environment": "client",
     "entrypoints": {
         "client": [
-            "net.bunten.tooltiptweaks.TooltipTweaks"
+            "net.penumbra.tooltiptweaks.TooltipTweaks"
         ],
         "modmenu": [
-            "net.bunten.tooltiptweaks.config.TooltipModMenu"
+            "net.penumbra.tooltiptweaks.config.TooltipModMenu"
         ]
     },
     "mixins": [
-        "tooltiptweaks.mixins.json"
+        {
+            "config": "tooltiptweaks.client.mixins.json",
+            "environment": "client"
+        }
     ],
     "depends": {
         "minecraft": ">=1.21.11",

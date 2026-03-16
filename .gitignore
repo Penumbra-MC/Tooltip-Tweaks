@@ -27,7 +27,15 @@ bin/
 # fabric
 
 run/
+server_run/
 *.log
 *.jar
 *.ini
 logs/
+/src/main/generated/.cache/
+*.DS_Store
+
+# lunarbunten
+*.py
+run
+run_server

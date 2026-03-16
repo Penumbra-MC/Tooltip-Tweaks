@@ -12,19 +12,9 @@ base {
 
 repositories {
 	maven {
-		url 'https://jitpack.io'
-	}
-	maven {
 		name = 'TerraformersMC'
 		url = 'https://maven.terraformersmc.com/'
 	}
-    maven {
-        name = "Modrinth"
-        url = "https://api.modrinth.com/maven"
-        content {
-            includeGroup "maven.modrinth"
-        }
-    }
 	maven {
 		name 'Xander Maven'
 		url 'https://maven.isxander.dev/releases'
@@ -89,8 +79,10 @@ java {
 }
 
 jar {
+	inputs.property "archivesName", archives_base_name
+
 	from("LICENSE.md") {
-		rename { "LICENSE_tooltiptweaks" }
+		rename { "LICENSE_tooltip_tweaks" }
 	}
 }
 
