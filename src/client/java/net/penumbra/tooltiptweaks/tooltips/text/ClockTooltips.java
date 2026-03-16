@@ -3,6 +3,7 @@ package net.penumbra.tooltiptweaks.tooltips.text;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.attribute.EnvironmentAttributes;
@@ -14,6 +15,7 @@ import net.minecraft.world.phys.Vec3;
 import net.penumbra.tooltiptweaks.config.TooltipTweaksConfig;
 import net.penumbra.tooltiptweaks.config.options.ClockTimeDisplay;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClockTooltips {
@@ -21,14 +23,14 @@ public class ClockTooltips {
     private static final Minecraft minecraft = Minecraft.getInstance();
     private static final TooltipTweaksConfig config = TooltipTweaksConfig.getInstance();
 
-    private static final MutableComponent UNKNOWN_TEXT = Component.translatable("tooltiptweaks.ui.unknown");
+    private static final Component UNKNOWN_TEXT = Component.translatable("tooltiptweaks.ui.unknown");
 
-    public static MutableComponent getClockText(ClientLevel level) {
-        MutableComponent value = UNKNOWN_TEXT;
+    public static Component getClockText(ClientLevel level) {
+        Component value = UNKNOWN_TEXT;
 
         if (natural(level)) {
-            boolean twelveHour = TooltipTweaksConfig.getInstance().clockTimeDisplay == ClockTimeDisplay.TWELVE_HOUR;
-            long time = minecraft.level.getDayTime();
+            boolean twelveHour = config.clockTimeDisplay == ClockTimeDisplay.TWELVE_HOUR;
+            long time = level.getDayTime();
 
             int hour = (int) ((time / 1000L + 6L) % 24L);
             int minute = (int) (60L * (time % 1000L) / 1000L);
@@ -38,20 +40,33 @@ public class ClockTooltips {
             String hourDisplay = twelveHour ? String.format("%d", displayedHour) : String.format("%02d", displayedHour);
             String minuteDisplay = String.format("%02d", minute);
 
-            MutableComponent suffix = twelveHour ? Component.translatable("tooltiptweaks.ui.clock." + (hour >= 12 ? "pm" : "am")) : Component.literal("");
+            Component suffix = twelveHour ? Component.translatable("tooltiptweaks.ui.clock." + (hour >= 12 ? "pm" : "am")) : CommonComponents.EMPTY;
             value = Component.translatable("tooltiptweaks.ui.clock.time.value", hourDisplay, minuteDisplay, suffix);
         }
 
         return Component.translatable("tooltiptweaks.ui.clock.time", value);
     }
 
-    public static MutableComponent getDayText(ClientLevel level) {
-        MutableComponent value = !natural(level) ? UNKNOWN_TEXT : Component.literal(String.valueOf(level.getDayTime() / 24000L));
+    private static long dayCount(ClientLevel level) {
+        return level.getDayTime() / 24000L;
+    }
+
+    public static Component getDayText(ClientLevel level) {
+        long dayCount = dayCount(level);
+        long finalDayCount = config.displayYearNumber ? (dayCount % 365) + 1 : dayCount;
+
+        Component value = !natural(level) ? UNKNOWN_TEXT : Component.literal(String.valueOf(finalDayCount));
         return Component.translatable("tooltiptweaks.ui.clock.day_number", value);
     }
 
-    public static MutableComponent getMoonPhaseText(ClientLevel level, Vec3 position) {
-        MutableComponent value;
+    public static Component getYearText(ClientLevel level) {
+        long dayCount = dayCount(level);
+        Component value = !natural(level) ? UNKNOWN_TEXT : Component.literal(String.valueOf((dayCount / 365) + 1));
+        return Component.translatable("tooltiptweaks.ui.clock.year_number", value);
+    }
+
+    public static Component getMoonPhaseText(ClientLevel level, Vec3 position) {
+        Component value;
 
         if (natural(level)) {
             MoonPhase phase = level.environmentAttributes().getValue(EnvironmentAttributes.MOON_PHASE, position);
@@ -59,6 +74,7 @@ public class ClockTooltips {
         } else {
             value = UNKNOWN_TEXT;
         }
+
         return Component.translatable("tooltiptweaks.ui.clock.moon_phase", value);
     }
 
@@ -68,18 +84,29 @@ public class ClockTooltips {
 
         if (!stack.is(Items.CLOCK) || level == null || cameraEntity == null) return;
 
-        MutableComponent dayText = getDayText(level);
-        MutableComponent timeText = getClockText(level);
-        MutableComponent phaseText = getMoonPhaseText(level, cameraEntity.position());
+        Component dayText = getDayText(level);
+        Component yearText = getYearText(level);
+        Component timeText = getClockText(level);
+        Component phaseText = getMoonPhaseText(level, cameraEntity.position());
 
-        if (config.displayDayNumber && config.clockTimeDisplay == ClockTimeDisplay.DISABLED) lines.add(dayText.withStyle(ChatFormatting.GRAY));
+        List<Component> values = new ArrayList<>();
 
-        if (config.clockTimeDisplay != ClockTimeDisplay.DISABLED) {
-            MutableComponent value = config.displayDayNumber  ? Component.translatable("tooltiptweaks.ui.clock.multiple_values", dayText, timeText) : timeText;
-            lines.add(value.withStyle(ChatFormatting.GRAY));
+        if (config.displayDayNumber) values.add(dayText);
+        if (config.displayYearNumber) values.add(yearText);
+        if (!config.clockTimeDisplay.equals(ClockTimeDisplay.DISABLED)) values.add(timeText);
+
+        MutableComponent mutable = Component.empty();
+
+        for (int i = 0; i < values.size(); i++) {
+            if (i > 0) mutable.append(", ");
+            mutable.append(values.get(i));
         }
 
-        if (config.displayMoonPhase) lines.add(phaseText.withStyle(ChatFormatting.GRAY));
+        if (!values.isEmpty()) {
+            lines.add(mutable.withStyle(ChatFormatting.GRAY));
+        }
+
+        if (config.displayMoonPhase) lines.add(phaseText.copy().withStyle(ChatFormatting.GRAY));
     }
 
     private static boolean natural(ClientLevel level) {
