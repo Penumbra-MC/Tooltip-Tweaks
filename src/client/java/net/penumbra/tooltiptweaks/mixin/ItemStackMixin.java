@@ -2,12 +2,14 @@ package net.penumbra.tooltiptweaks.mixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
@@ -64,8 +66,19 @@ public abstract class ItemStackMixin {
     )
     private void TooltipTweaks$appendBeforeHoverText(Item.TooltipContext context, Player player, TooltipFlag type, CallbackInfoReturnable<List<Component>> info) {
         TooltipTweaks.appendBeforeHoverText(stack, lines);
+    }
 
-        if (config.updateEnchantmentTooltips && isEnchanted()) lines.add(CommonComponents.EMPTY);
+    @WrapOperation(
+            method = "addDetailsToTooltip",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/item/ItemStack;addToTooltip(Lnet/minecraft/core/component/DataComponentType;Lnet/minecraft/world/item/Item$TooltipContext;Lnet/minecraft/world/item/component/TooltipDisplay;Ljava/util/function/Consumer;Lnet/minecraft/world/item/TooltipFlag;)V",
+                    ordinal = 14
+            )
+    )
+    private <T> void dfgfdg(ItemStack instance, DataComponentType<T> type, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> consumer, TooltipFlag flag, Operation<Void> original) {
+        if (config.updateEnchantmentTooltips && (isEnchanted() || instance.is(Items.ENCHANTED_BOOK))) lines.add(CommonComponents.EMPTY);
+        original.call(instance, type, context, display, consumer, flag);
     }
 
     @WrapOperation(
