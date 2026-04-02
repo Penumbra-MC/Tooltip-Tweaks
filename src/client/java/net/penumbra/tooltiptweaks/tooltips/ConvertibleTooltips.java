@@ -14,7 +14,7 @@ import static net.penumbra.tooltiptweaks.TooltipTweaks.id;
 
 public class ConvertibleTooltips {
 
-    public static final MappedRegistry<ConvertibleTooltipData> CONVERTIBLE_TOOLTIP_DATA_REGISTRY = FabricRegistryBuilder.<ConvertibleTooltipData>createSimple(ResourceKey.createRegistryKey(id("convertible_tooltip"))).attribute(RegistryAttribute.SYNCED).buildAndRegister();
+    public static final MappedRegistry<ConvertibleTooltipData> CONVERTIBLE_TOOLTIP_DATA_REGISTRY = FabricRegistryBuilder.<ConvertibleTooltipData>create(ResourceKey.createRegistryKey(id("convertible_tooltip"))).attribute(RegistryAttribute.SYNCED).buildAndRegister();
 
     public static final ConvertibleTooltipData CONTAINER = register("container", new ContainerGuiTooltip());
     public static final ConvertibleTooltipData FOOD = register("food", new FoodGuiTooltip());

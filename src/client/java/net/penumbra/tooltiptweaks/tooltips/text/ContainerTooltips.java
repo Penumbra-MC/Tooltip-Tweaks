@@ -8,6 +8,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.penumbra.tooltiptweaks.config.options.ContainerStyle;
+import org.jspecify.annotations.NonNull;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,7 +35,7 @@ public class ContainerTooltips implements TextTooltipProvider {
     private void addPerItemTooltips(ItemStack stack, List<Component> lines) {
 
         // Go through the inventory and add items to a HashMap
-        for (ItemStack itemStack : stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).nonEmptyItems()) {
+        for (ItemStack itemStack : containerItems(stack)) {
             if (!itemStack.isEmpty()) {
                 Item item = itemStack.getItem();
                 int count = itemStack.getCount();
@@ -49,7 +50,8 @@ public class ContainerTooltips implements TextTooltipProvider {
 
         // Go through the HashMap and render lines based on the item and count data
         for (Map.Entry<Item, Integer> set : ITEM_COUNT_MAP.entrySet()) {
-            MutableComponent name = set.getKey().getName().plainCopy();
+            MutableComponent name = set.getKey().getDefaultInstance().getItemName().plainCopy();
+
             Integer count = set.getValue();
 
             if (renderedLines < maxrenderedLines) {
@@ -65,13 +67,17 @@ public class ContainerTooltips implements TextTooltipProvider {
         }
     }
 
+    private static @NonNull List<ItemStack> containerItems(ItemStack stack) {
+        return stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).allItemsCopyStream().filter(item -> !item.isEmpty()).toList();
+    }
+
     private void addPerStackTooltips(ItemStack stack, List<Component> lines) {
 
         int maxrenderedLines = config.containerEntries;
         int renderedLines = 0;
         int moreItems = 0;
 
-        for (ItemStack itemStack : stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).nonEmptyItems()) {
+        for (ItemStack itemStack : containerItems(stack)) {
             MutableComponent name = itemStack.getHoverName().plainCopy();
             int count = itemStack.getCount();
 

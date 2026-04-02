@@ -1,7 +1,7 @@
 package net.penumbra.tooltiptweaks.tooltips.gui;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
@@ -27,7 +27,7 @@ public class ContainerGuiTooltip implements GuiTooltipProvider {
     }
 
     private boolean isEmpty() {
-        return component.stream().filter(stack -> (!stack.isEmpty())).toList().isEmpty();
+        return component.allItemsCopyStream().filter(stack -> !stack.isEmpty()).toList().isEmpty();
     }
 
     @Override
@@ -43,7 +43,7 @@ public class ContainerGuiTooltip implements GuiTooltipProvider {
     }
 
     @Override
-    public void renderImage(Font font, int x, int y, int width, int height, GuiGraphics graphics) {
+    public void extractImage(Font font, int x, int y, int width, int height, GuiGraphicsExtractor graphics) {
         if (isEmpty()) return;
 
         graphics.blit(RenderPipelines.GUI_TEXTURED, TooltipTweaks.id("textures/gui/container.png"), x, y, 0, 0, 172, 64, 256, 128);
@@ -51,7 +51,7 @@ public class ContainerGuiTooltip implements GuiTooltipProvider {
         int xOffset = 2;
         int yOffset = -16;
 
-        List<ItemStack> list = component.stream().toList();
+        List<ItemStack> list = component.allItemsCopyStream().toList();
 
         for (int i = 0; i < list.size(); i++) {
             ItemStack stack = list.get(i);
@@ -62,8 +62,8 @@ public class ContainerGuiTooltip implements GuiTooltipProvider {
                 yOffset += 18;
             }
 
-            graphics.renderItem(stack, x + xOffset, y + yOffset);
-            graphics.renderItemDecorations(font, stack, x + xOffset, y + yOffset);
+            graphics.item(stack, x + xOffset, y + yOffset);
+            graphics.itemDecorations(font, stack, x + xOffset, y + yOffset);
         }
     }
 }

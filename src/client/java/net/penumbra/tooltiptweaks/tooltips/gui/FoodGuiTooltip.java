@@ -1,7 +1,7 @@
 package net.penumbra.tooltiptweaks.tooltips.gui;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
@@ -63,7 +63,7 @@ public class FoodGuiTooltip implements GuiTooltipProvider {
     }
 
     @Override
-    public void renderImage(Font font, int x, int y, int width, int height, GuiGraphics graphics) {
+    public void extractImage(Font font, int x, int y, int width, int height, GuiGraphicsExtractor graphics) {
         int xOffset = (config.nourishmentIconLocation == IconLocation.BESIDE) ? font.width(stack.getHoverName()) + 2 : 0;
         int yOffset = (config.nourishmentIconLocation == IconLocation.BESIDE) ? -12 : 0;
 

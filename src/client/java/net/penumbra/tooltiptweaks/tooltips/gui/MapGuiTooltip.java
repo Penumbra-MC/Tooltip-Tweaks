@@ -1,7 +1,7 @@
 package net.penumbra.tooltiptweaks.tooltips.gui;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.state.MapRenderState;
@@ -47,20 +47,20 @@ public class MapGuiTooltip implements GuiTooltipProvider {
     }
 
     @Override
-    public void renderImage(Font font, int x, int y, int width, int height, GuiGraphics graphics) {
+    public void extractImage(Font font, int x, int y, int width, int height, GuiGraphicsExtractor graphics) {
         if (getMapItemSavedData() == null) return;
 
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED, Identifier.withDefaultNamespace("container/cartography_table/map"), x, y, 66, 66);
-        renderMap(graphics, mapId, getMapItemSavedData(), x + 4, y + 4, 0.45F);
+        extractMap(graphics, mapId, getMapItemSavedData(), x + 4, y + 4, 0.45F);
     }
 
-    private void renderMap(GuiGraphics guiGraphics, MapId mapId, MapItemSavedData mapItemSavedData, int i, int j, float f) {
+    private void extractMap(GuiGraphicsExtractor guiGraphics, MapId mapId, MapItemSavedData mapItemSavedData, int i, int j, float f) {
         if (mapId != null && mapItemSavedData != null) {
             guiGraphics.pose().pushMatrix();
             guiGraphics.pose().translate(i, j);
             guiGraphics.pose().scale(f, f);
-            this.minecraft.getMapRenderer().extractRenderState(mapId, mapItemSavedData, this.mapRenderState);
-            guiGraphics.submitMapRenderState(this.mapRenderState);
+            minecraft.getMapRenderer().extractRenderState(mapId, mapItemSavedData, mapRenderState);
+            guiGraphics.map(mapRenderState);
             guiGraphics.pose().popMatrix();
         }
     }

@@ -57,7 +57,7 @@ public class ClockTooltips implements TextTooltipProvider {
 
         if (natural(level)) {
             boolean twelveHour = config.clockTimeDisplay == ClockTimeDisplay.TWELVE_HOUR;
-            long time = level.getDayTime();
+            long time = level.getOverworldClockTime();
 
             int hour = (int) ((time / 1000L + 6L) % 24L);
             int minute = (int) (60L * (time % 1000L) / 1000L);
@@ -75,7 +75,7 @@ public class ClockTooltips implements TextTooltipProvider {
     }
 
     private long dayCount(ClientLevel level) {
-        return level.getDayTime() / 24000L;
+        return level.getOverworldClockTime() / 24000L;
     }
 
     private Component getDayText(ClientLevel level) {

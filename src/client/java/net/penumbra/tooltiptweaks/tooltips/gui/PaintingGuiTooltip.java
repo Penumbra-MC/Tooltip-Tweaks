@@ -1,7 +1,7 @@
 package net.penumbra.tooltiptweaks.tooltips.gui;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.Identifier;
@@ -45,7 +45,7 @@ public class PaintingGuiTooltip implements GuiTooltipProvider {
     }
 
     @Override
-    public void renderImage(Font font, int x, int y, int width, int height, GuiGraphics graphics) {
+    public void extractImage(Font font, int x, int y, int width, int height, GuiGraphicsExtractor graphics) {
         Identifier assetId = Identifier.fromNamespaceAndPath(variant.assetId().getNamespace(), "textures/painting/" + variant.assetId().getPath() + ".png");
         graphics.blit(RenderPipelines.GUI_TEXTURED, assetId, x, y, 0, 0, variant.width() * 16, variant.height() * 16, variant.width() * 16, variant.height() * 16);
     }
