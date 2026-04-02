@@ -1,6 +1,7 @@
 package net.penumbra.tooltiptweaks.tooltips;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
@@ -27,7 +28,7 @@ public class TooltipTweaksComponents {
 
     public static void tryAddSpace(List<Component> lines) {
         for (MutableComponent header : HEADER_TEXTS) if (lines.contains(header)) return;
-        lines.add(Component.literal(" "));
+        lines.add(CommonComponents.EMPTY);
     }
 
     public static void addConsumedHeader(List<Component> lines, boolean whenFullyConsumed) {
