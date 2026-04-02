@@ -63,6 +63,10 @@ public class CompassTooltips implements TextTooltipProvider {
                 BlockPos targetPos = global.pos();
                 ResourceKey<Level> targetDimension = global.dimension();
 
+                if (!lines.contains(CommonComponents.EMPTY)) {
+                    lines.add(CommonComponents.EMPTY);
+                }
+                
                 lines.add(finalHeader.copy().withStyle(headerColor));
 
                 if (config.displayCompassCoordinates) {
