@@ -1,9 +1,9 @@
 package net.penumbra.tooltiptweaks.tooltips.text;
 
 import com.ibm.icu.text.DecimalFormat;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
@@ -60,8 +60,8 @@ public class DurabilityTooltips implements TextTooltipProvider {
                 float f = Math.max(0, (max - damage) / max);
                 yield Mth.hsvToRgb(f / 3, 1, 1);
             }
-            case WHITE -> ChatFormatting.WHITE.getColor();
-            case GRAY -> ChatFormatting.GRAY.getColor();
+            case WHITE -> TextColor.WHITE.getValue();
+            case GRAY -> TextColor.GRAY.getValue();
         };
     }
 }

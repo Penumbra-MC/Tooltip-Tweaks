@@ -33,7 +33,7 @@ public class RepairCostTooltip implements TextTooltipProvider {
         if (!stack.has(DataComponents.REPAIR_COST) || config.repairCostDisplay == RepairCostDisplay.DISABLED) return false;
 
         if (config.repairCostDisplay == RepairCostDisplay.ON_RELEVANT_MENUS) {
-            return minecraft.screen instanceof AnvilScreen || minecraft.screen instanceof GrindstoneScreen || minecraft.screen instanceof SmithingScreen;
+            return minecraft.gui.screen() instanceof AnvilScreen || minecraft.gui.screen() instanceof GrindstoneScreen || minecraft.gui.screen() instanceof SmithingScreen;
         }
 
         return config.repairCostDisplay == RepairCostDisplay.ENABLED;
