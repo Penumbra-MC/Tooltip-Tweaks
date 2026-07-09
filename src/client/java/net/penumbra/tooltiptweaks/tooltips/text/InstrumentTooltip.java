@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -38,7 +39,7 @@ public class InstrumentTooltip implements TextTooltipProvider {
 
             if (blockItem.getBlock() instanceof SkullBlock skull) {
                 value = switch (skull.getType()) {
-                    case DRAGON -> EntityType.ENDER_DRAGON.getDescription().copy();
+                    case DRAGON -> EntityTypes.ENDER_DRAGON.getDescription().copy();
                     case PLAYER -> Component.translatable("tooltiptweaks.ui.instrument.custom_head");
                     default -> {
                         EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.parse(skull.getType().getSerializedName()));
