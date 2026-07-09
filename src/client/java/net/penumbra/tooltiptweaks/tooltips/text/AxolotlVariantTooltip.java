@@ -16,8 +16,9 @@ public class AxolotlVariantTooltip implements TextTooltipProvider {
         if (!config.displayAxolotlVariants || !stack.has(DataComponents.AXOLOTL_VARIANT)) return;
 
         Axolotl.Variant variant = stack.getOrDefault(DataComponents.AXOLOTL_VARIANT, Axolotl.Variant.DEFAULT);
-        MutableComponent component = Component.translatable("tooltiptweaks.ui.axolotl." + variant.getName());
+        MutableComponent value = Component.translatable("tooltiptweaks.ui.axolotl." + variant.getName());
+        MutableComponent formatted = Component.translatable("tooltiptweaks.ui.axolotl.value_formatted", value);
 
-        lines.add(component.withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+        lines.add(formatted.withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
     }
 }
