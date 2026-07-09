@@ -114,6 +114,7 @@
     "tooltiptweaks.ui.axolotl.cyan": "Cyan",
     "tooltiptweaks.ui.axolotl.gold": "Gold",
     "tooltiptweaks.ui.axolotl.lucy": "Lucy",
+    "tooltiptweaks.ui.axolotl.value_formatted": "Variant: %s",
     "tooltiptweaks.ui.axolotl.wild": "Wild",
     "tooltiptweaks.ui.cannot_repair": "Cannot Repair",
     "tooltiptweaks.ui.clock.am": "AM",
