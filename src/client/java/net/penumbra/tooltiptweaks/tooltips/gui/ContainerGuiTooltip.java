@@ -27,7 +27,7 @@ public class ContainerGuiTooltip implements GuiTooltipProvider {
     }
 
     private boolean isEmpty() {
-        return component.allItemsCopyStream().filter(stack -> !stack.isEmpty()).toList().isEmpty();
+        return component.nonEmptyItemCopyStream().toList().isEmpty();
     }
 
     @Override
@@ -51,7 +51,7 @@ public class ContainerGuiTooltip implements GuiTooltipProvider {
         int xOffset = 2;
         int yOffset = -16;
 
-        List<ItemStack> list = component.allItemsCopyStream().toList();
+        List<ItemStack> list = component.nonEmptyItemCopyStream().toList();
 
         for (int i = 0; i < list.size(); i++) {
             ItemStack stack = list.get(i);

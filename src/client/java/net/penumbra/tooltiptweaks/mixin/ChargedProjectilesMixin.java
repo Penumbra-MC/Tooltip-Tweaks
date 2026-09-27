@@ -59,8 +59,7 @@ public abstract class ChargedProjectilesMixin {
             method = "addProjectileTooltip",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/item/ItemStack;getDisplayName()Lnet/minecraft/network/chat/Component;",
-                    ordinal = 1
+                    target = "Lnet/minecraft/world/item/ItemStack;getHoverName()Lnet/minecraft/network/chat/Component;"
             )
     )
     private static Component TooltipTweaks$recolorProjectileName2(ItemStack instance, Operation<Component> original) {
