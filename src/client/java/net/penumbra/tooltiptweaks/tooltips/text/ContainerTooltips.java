@@ -68,7 +68,7 @@ public class ContainerTooltips implements TextTooltipProvider {
     }
 
     private static @NonNull List<ItemStack> containerItems(ItemStack stack) {
-        return stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).allItemsCopyStream().filter(item -> !item.isEmpty()).toList();
+        return stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).nonEmptyItemCopyStream().toList();
     }
 
     private void addPerStackTooltips(ItemStack stack, List<Component> lines) {
